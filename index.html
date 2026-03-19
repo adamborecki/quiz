@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Signal Path Quiz Player</title>
+    <meta
+      name="description"
+      content="Static, schema-driven quiz player for GitHub Pages with audio support, grading, and review."
+    >
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Schema-Driven Quiz MVP</p>
+          <h1>Signal Path</h1>
+          <p class="hero-text">
+            A front-end-only quiz player for classroom listening checks, review quizzes,
+            and GitHub Pages deployments.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <label class="control-group">
+            <span>Example pack</span>
+            <select id="quiz-picker" aria-label="Select quiz pack"></select>
+          </label>
+          <button id="theme-toggle" class="ghost-button" type="button">
+            Toggle theme
+          </button>
+        </div>
+      </header>
+
+      <main class="app-layout">
+        <aside class="sidebar" id="sidebar"></aside>
+        <section class="stage">
+          <div id="status-banner" class="status-banner" role="status" aria-live="polite"></div>
+          <div id="app-root" class="app-root" aria-live="polite"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="app.mjs"></script>
+  </body>
+</html>

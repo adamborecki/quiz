@@ -1,0 +1,71 @@
+{
+  "$schema": "../quiz-pack.schema.json",
+  "id": "listening-basics-demo",
+  "title": "Listening Basics Demo",
+  "instructions": "Use this compact pack to test the player flow, mobile layout, and local audio playback.",
+  "course": "Demo",
+  "topic": "Playback and listening",
+  "version": "2026.03.18",
+  "settings": {
+    "shuffleQuestions": false,
+    "shuffleChoices": false,
+    "showResultsAtEnd": true,
+    "enableHints": true,
+    "enableFiftyFifty": false
+  },
+  "questions": [
+    {
+      "id": "q1-headphones",
+      "type": "multiple_choice",
+      "prompt": "Why is it helpful to keep quiz audio clips short in a front-end-only web app?",
+      "choices": [
+        { "id": "a", "label": "Short clips download and buffer more quickly on phones" },
+        { "id": "b", "label": "Browsers cannot play long clips" },
+        { "id": "c", "label": "GitHub Pages blocks audio above ten seconds" },
+        { "id": "d", "label": "Long clips break local grading logic" }
+      ],
+      "correctAnswer": "a",
+      "hint": "Think about classroom Wi-Fi and mobile playback.",
+      "categories": ["delivery"],
+      "explanation": "Short clips reduce bandwidth and buffering pressure, which makes classroom playback more reliable across devices."
+    },
+    {
+      "id": "q2-brightness",
+      "type": "audio_multiple_choice",
+      "prompt": "Listen to the tone. Which description fits it best?",
+      "choices": [
+        { "id": "a", "label": "Mostly sub-bass energy" },
+        { "id": "b", "label": "A midrange reference tone" },
+        { "id": "c", "label": "A noisy snare sample" },
+        { "id": "d", "label": "A spoken word phrase" }
+      ],
+      "correctAnswer": "b",
+      "hint": "It sounds like a clean test tone rather than a complex recording.",
+      "categories": ["listening"],
+      "media": [
+        {
+          "type": "audio",
+          "src": "../assets/audio/tone-880.wav",
+          "title": "Reference tone",
+          "caption": "Short synthetic tone for testing playback."
+        }
+      ],
+      "explanation": "The clip is a pure tone, which makes it useful for quick listening checks in a lightweight demo pack."
+    },
+    {
+      "id": "q3-results",
+      "type": "multiple_choice",
+      "prompt": "Which result output is most useful for a student who still needs to paste a score into another system?",
+      "choices": [
+        { "id": "a", "label": "A copyable plain-text summary" },
+        { "id": "b", "label": "Only a hidden developer console log" },
+        { "id": "c", "label": "A screenshot-only workflow" },
+        { "id": "d", "label": "A backend-only analytics dashboard" }
+      ],
+      "correctAnswer": "a",
+      "hint": "The student may need a simple format they can paste elsewhere.",
+      "categories": ["results"],
+      "explanation": "Plain-text summaries fit the existing Google Form style workflow while keeping the front end simple."
+    }
+  ]
+}

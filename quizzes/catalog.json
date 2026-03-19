@@ -1,0 +1,14 @@
+[
+  {
+    "id": "mus347-quiz2",
+    "title": "MUS 347 Quiz 2",
+    "description": "Music technology quiz with audio examples, EQ, dynamics, and stereo imaging prompts.",
+    "path": "quizzes/mus347-quiz2.json"
+  },
+  {
+    "id": "listening-basics-demo",
+    "title": "Listening Basics Demo",
+    "description": "Compact schema example focused on listening and playback fundamentals.",
+    "path": "quizzes/listening-basics-demo.json"
+  }
+]

@@ -1,0 +1,112 @@
+{
+  "$schema": "../quiz-pack.schema.json",
+  "id": "mus347-quiz2",
+  "title": "MUS 347 Quiz 2",
+  "instructions": "Work through each question on your phone or laptop. Listen to audio examples before answering, then submit for instant local grading.",
+  "course": "MUS 347",
+  "topic": "Music technology foundations",
+  "version": "2026.03.18",
+  "settings": {
+    "shuffleQuestions": false,
+    "shuffleChoices": true,
+    "showResultsAtEnd": true,
+    "enableHints": true,
+    "enableFiftyFifty": false
+  },
+  "questions": [
+    {
+      "id": "q1-dynamics",
+      "type": "multiple_choice",
+      "prompt": "Which processor is designed to reduce dynamic range after a signal crosses a threshold?",
+      "choices": [
+        { "id": "a", "label": "Compressor" },
+        { "id": "b", "label": "Delay" },
+        { "id": "c", "label": "Chorus" },
+        { "id": "d", "label": "Phaser" }
+      ],
+      "correctAnswer": "a",
+      "hint": "Look for the tool that turns peaks down once they get too loud.",
+      "categories": ["dynamics"],
+      "allowFiftyFifty": true,
+      "explanation": "A compressor narrows the gap between loud and soft material by reducing peaks above the threshold."
+    },
+    {
+      "id": "q2-filter",
+      "type": "multiple_choice",
+      "prompt": "You want to remove sub-bass rumble from a vocal recording while preserving most of the voice. Which move is the best first step?",
+      "choices": [
+        { "id": "a", "label": "Apply a high-pass filter around the low end" },
+        { "id": "b", "label": "Boost the shelf above 10 kHz" },
+        { "id": "c", "label": "Add heavy stereo widening" },
+        { "id": "d", "label": "Reverse the polarity of the track" }
+      ],
+      "correctAnswer": "a",
+      "hint": "Think about the filter that removes lows below a cutoff point.",
+      "categories": ["filters", "eq"],
+      "allowFiftyFifty": true,
+      "explanation": "A high-pass filter is the standard first move for cleaning rumble and handling noise that lives below the useful vocal range."
+    },
+    {
+      "id": "q3-tone-identification",
+      "type": "audio_multiple_choice",
+      "prompt": "Listen to the clip. Which range best describes the tone you hear?",
+      "choices": [
+        { "id": "a", "label": "Sub-bass region" },
+        { "id": "b", "label": "Low-mid region" },
+        { "id": "c", "label": "Midrange around concert A" },
+        { "id": "d", "label": "Air band above 10 kHz" }
+      ],
+      "correctAnswer": "c",
+      "hint": "The example sits close to a familiar tuning reference.",
+      "categories": ["listening", "frequency recognition"],
+      "media": [
+        {
+          "type": "audio",
+          "src": "../assets/audio/tone-440.wav",
+          "title": "Audio example",
+          "caption": "A short test tone for frequency-range recognition."
+        }
+      ],
+      "explanation": "The clip is centered at roughly 440 Hz, which sits in the midrange and matches the familiar concert A reference."
+    },
+    {
+      "id": "q4-stereo",
+      "type": "multiple_choice",
+      "prompt": "Which statement about stereo imaging is most accurate?",
+      "choices": [
+        { "id": "a", "label": "Stereo width is created by differences between left and right channels" },
+        { "id": "b", "label": "A mono file always sounds wider than a stereo file" },
+        { "id": "c", "label": "Stereo width requires reverb on every track" },
+        { "id": "d", "label": "Panning only affects volume, never placement" }
+      ],
+      "correctAnswer": "a",
+      "hint": "Think about how the two speakers differ when an image feels wide.",
+      "categories": ["stereo", "imaging"],
+      "allowFiftyFifty": true,
+      "explanation": "Stereo width depends on channel differences in timing, level, tone, or phase, while mono collapses those differences."
+    },
+    {
+      "id": "q5-low-rumble",
+      "type": "audio_multiple_choice",
+      "prompt": "This clip is dominated by low-frequency energy. Which tool would most directly tame it while leaving higher content available?",
+      "choices": [
+        { "id": "a", "label": "High-pass filter" },
+        { "id": "b", "label": "De-esser" },
+        { "id": "c", "label": "Stereo imager" },
+        { "id": "d", "label": "Tape delay" }
+      ],
+      "correctAnswer": "a",
+      "hint": "Pick the filter that removes lows below a cutoff frequency.",
+      "categories": ["filters", "listening"],
+      "media": [
+        {
+          "type": "audio",
+          "src": "../assets/audio/tone-110.wav",
+          "title": "Low-end example",
+          "caption": "A short low-frequency tone that stands in for unwanted rumble."
+        }
+      ],
+      "explanation": "A high-pass filter removes low-frequency buildup while preserving the mid and high information above the cutoff."
+    }
+  ]
+}

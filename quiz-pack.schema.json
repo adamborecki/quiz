@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamborecki.github.io/quiz/quiz-pack.schema.json",
+  "title": "Quiz Pack",
+  "description": "Schema for static GitHub Pages quiz packs used by the Signal Path player.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "instructions", "settings", "questions"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "instructions": {
+      "type": "string",
+      "minLength": 1
+    },
+    "course": {
+      "type": "string"
+    },
+    "topic": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["showResultsAtEnd"],
+      "properties": {
+        "shuffleQuestions": {
+          "type": "boolean",
+          "default": false
+        },
+        "shuffleChoices": {
+          "type": "boolean",
+          "default": false
+        },
+        "showResultsAtEnd": {
+          "type": "boolean"
+        },
+        "enableHints": {
+          "type": "boolean",
+          "default": false
+        },
+        "enableFiftyFifty": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/multipleChoiceQuestion"
+          },
+          {
+            "$ref": "#/$defs/audioMultipleChoiceQuestion"
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "choice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "audioMedia": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "src"],
+      "properties": {
+        "type": {
+          "const": "audio"
+        },
+        "src": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        }
+      }
+    },
+    "questionBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "prompt", "choices", "correctAnswer"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "choices": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/choice"
+          }
+        },
+        "correctAnswer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hint": {
+          "type": "string"
+        },
+        "allowFiftyFifty": {
+          "type": "boolean"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "media": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/audioMedia"
+          }
+        },
+        "explanation": {
+          "type": "string"
+        }
+      }
+    },
+    "multipleChoiceQuestion": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/questionBase"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "multiple_choice"
+            }
+          }
+        }
+      ]
+    },
+    "audioMultipleChoiceQuestion": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/questionBase"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "audio_multiple_choice"
+            },
+            "media": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/audioMedia"
+              }
+            }
+          },
+          "required": ["media"]
+        }
+      ]
+    }
+  }
+}
