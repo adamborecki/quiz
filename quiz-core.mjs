@@ -342,6 +342,96 @@ export function buildPlainTextSummary(quiz, grade, answers, submittedAt = new Da
   return lines.join("\n").trim();
 }
 
+function formatDurationForExport(ms) {
+  if (!ms || ms < 0) return "—";
+  const seconds = Math.round(ms / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remainder = seconds % 60;
+  return `${minutes}m ${remainder}s`;
+}
+
+function getLikertLabel(id) {
+  const map = {
+    "very-confident": "Very confident",
+    "somewhat-confident": "Somewhat confident",
+    "neutral": "Neutral",
+    "not-very-confident": "Not very confident",
+    "not-confident-at-all": "Not confident at all",
+  };
+  return map[id] ?? id ?? "—";
+}
+
+export function buildCanvasSubmission(quiz, attempts) {
+  const lines = [];
+  lines.push(`=== ${quiz.title} ===`);
+  lines.push(`Student submission — ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} at ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`);
+  lines.push("");
+
+  for (const attempt of attempts) {
+    const label = attempts.length > 1 ? `--- Attempt ${attempt.attemptNumber} ---` : `--- Quiz Results ---`;
+    lines.push(label);
+    lines.push("");
+
+    const r = attempt.reflections || {};
+    lines.push(`Pre-quiz feeling: ${getLikertLabel(r["pre-feeling"])}`);
+    lines.push(`Preparation: ${r["pre-prep"] ? `"${r["pre-prep"]}"` : "—"}`);
+
+    if (attempt.quizStartedAt) {
+      const start = attempt.quizStartedAt instanceof Date ? attempt.quizStartedAt : new Date(attempt.quizStartedAt);
+      lines.push(`Quiz started: ${start.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`);
+    }
+    if (attempt.submittedAt) {
+      const end = attempt.submittedAt instanceof Date ? attempt.submittedAt : new Date(attempt.submittedAt);
+      lines.push(`Submitted: ${end.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`);
+    }
+    lines.push("");
+
+    const grade = attempt.grade;
+    lines.push(`Score: ${grade.correctCount}/${grade.totalQuestions} (${grade.scorePercent}%)`);
+    lines.push("");
+
+    if (grade.categoryBreakdown.length > 0) {
+      lines.push("Category Breakdown:");
+      for (const bucket of grade.categoryBreakdown) {
+        lines.push(`  - ${bucket.category}: ${bucket.correct}/${bucket.total}`);
+      }
+      lines.push("");
+    }
+
+    lines.push("Per-Question Detail:");
+    quiz.questions.forEach((question, index) => {
+      const selectedAnswer = attempt.answers[question.id] ?? null;
+      const isCorrect = selectedAnswer === question.correctAnswer;
+      const status = isCorrect ? "Correct" : "Incorrect";
+      const ts = attempt.questionTimestamps?.[question.id];
+      const timeSpent = ts && ts.end && ts.start ? ts.end - ts.start : null;
+      const usedHint = attempt.hintUsage?.[question.id] ?? false;
+
+      if (isCorrect) {
+        lines.push(`  ${index + 1}. [${status}] ${question.prompt} → ${getChoiceLabel(question, selectedAnswer)}`);
+      } else {
+        lines.push(`  ${index + 1}. [${status}] ${question.prompt}`);
+        lines.push(`     Your answer: ${getChoiceLabel(question, selectedAnswer)} | Correct: ${getChoiceLabel(question, question.correctAnswer)}`);
+      }
+      const details = [];
+      if (timeSpent) details.push(`Time: ${formatDurationForExport(timeSpent)}`);
+      details.push(`Hint used: ${usedHint ? "Yes" : "No"}`);
+      lines.push(`     ${details.join(" | ")}`);
+    });
+    lines.push("");
+
+    lines.push(`Post-quiz feeling: ${getLikertLabel(r["post-feeling"])}`);
+    if (r["post-plan"]) {
+      lines.push(`Study focus: "${r["post-plan"]}"`);
+    }
+    lines.push("");
+  }
+
+  lines.push("=== End of submission ===");
+  return lines.join("\n").trim();
+}
+
 export function buildAttemptExport(quiz, grade, answers, submittedAt = new Date()) {
   return {
     quiz: {
