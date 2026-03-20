@@ -12,7 +12,9 @@ const sidebarElement = document.querySelector("#sidebar");
 const rootElement = document.querySelector("#app-root");
 const statusBanner = document.querySelector("#status-banner");
 const quizPicker = document.querySelector("#quiz-picker");
-const themeToggle = document.querySelector("#theme-toggle");
+const heroEyebrow = document.querySelector("#hero-eyebrow");
+const heroTitle = document.querySelector("#hero-title");
+const heroText = document.querySelector("#hero-text");
 const defaultPackPath = "quizzes/mus347-quiz2.json";
 
 const state = {
@@ -43,21 +45,6 @@ function setStatus(message = "", tone = "") {
   }
 }
 
-function getStoredTheme() {
-  const storedTheme = window.localStorage.getItem("quiz-theme");
-
-  if (storedTheme === "light" || storedTheme === "dark") {
-    return storedTheme;
-  }
-
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
-function applyTheme(theme) {
-  document.documentElement.dataset.theme = theme;
-  window.localStorage.setItem("quiz-theme", theme);
-}
-
 function getPackLabel(path) {
   return state.catalog.find((pack) => pack.path === path)?.title ?? path;
 }
@@ -78,6 +65,23 @@ function createDownload(filename, content, mimeType) {
   URL.revokeObjectURL(downloadUrl);
 }
 
+function renderHero() {
+  if (!state.quiz) {
+    document.title = "Quiz";
+    heroEyebrow.textContent = "Student quiz";
+    heroTitle.textContent = "Take your quiz";
+    heroText.textContent =
+      "Read each prompt carefully, listen when audio appears, and answer each question on your own.";
+    return;
+  }
+
+  const questionLabel = state.quiz.questions.length === 1 ? "question" : "questions";
+  document.title = `${state.quiz.title} | Quiz`;
+  heroEyebrow.textContent = "You're taking a quiz";
+  heroTitle.textContent = state.quiz.title;
+  heroText.textContent = `Work at your own pace, listen carefully, and answer honestly. This quiz has ${state.quiz.questions.length} ${questionLabel}.`;
+}
+
 function renderSidebar() {
   if (!state.quiz) {
     sidebarElement.innerHTML = `
@@ -85,8 +89,8 @@ function renderSidebar() {
         <div class="sidebar-stack">
           <section class="sidebar-section">
             <p class="eyebrow">Loading</p>
-            <h2 class="sidebar-title">Preparing quiz player</h2>
-            <p class="sidebar-text">Fetching the selected quiz pack and validating it against the schema.</p>
+            <h2 class="sidebar-title">Getting your quiz ready</h2>
+            <p class="sidebar-text">Loading the selected quiz so you can begin.</p>
           </section>
         </div>
       </div>
@@ -102,9 +106,9 @@ function renderSidebar() {
     <div class="sidebar-panel">
       <div class="sidebar-stack">
         <section class="sidebar-section">
-          <p class="eyebrow">${escapeHtml(state.quiz.course || "GitHub Pages")}</p>
-          <h2 class="sidebar-title">${escapeHtml(state.quiz.title)}</h2>
-          <p class="sidebar-text">${escapeHtml(state.quiz.instructions)}</p>
+          <p class="eyebrow">${escapeHtml(state.quiz.course || "Student quiz")}</p>
+          <h2 class="sidebar-title">Quiz details</h2>
+          <p class="sidebar-text">${escapeHtml(state.quiz.instructions || "Answer each question on your own and submit when you're finished.")}</p>
           <div class="meta-row">
             ${state.quiz.topic ? `<span class="meta-pill">${escapeHtml(state.quiz.topic)}</span>` : ""}
             ${state.quiz.version ? `<span class="meta-pill">v${escapeHtml(state.quiz.version)}</span>` : ""}
@@ -153,7 +157,7 @@ function renderSidebar() {
                 <div class="results-card">
                   <span class="metric-label">Score</span>
                   <strong class="metric-value">${state.grade.correctCount}/${state.grade.totalQuestions}</strong>
-                  <p class="sidebar-text">Category-ready summary and export tools are available below.</p>
+                  <p class="sidebar-text">Your quiz is submitted. Review your answers below if you need to.</p>
                 </div>
               </section>
             `
@@ -162,7 +166,7 @@ function renderSidebar() {
                 <div class="results-card">
                   <span class="metric-label">Current question</span>
                   <strong class="metric-value">${escapeHtml(currentQuestion.type.replaceAll("_", " "))}</strong>
-                  <p class="sidebar-text">Submit after every question has an answer. The player grades everything locally.</p>
+                  <p class="sidebar-text">Answer every question before you submit. Use the numbered buttons to move around anytime.</p>
                 </div>
               </section>
             `
@@ -283,7 +287,7 @@ function renderQuestion() {
     const selectedValue = event.target.value;
     state.answers[question.id] = selectedValue;
     renderSidebar();
-    setStatus("Answer saved locally.", "success");
+    setStatus("Answer saved.", "success");
   });
 
   rootElement.querySelector("#prev-button").addEventListener("click", () => {
@@ -316,11 +320,10 @@ function renderResults() {
     <section class="results-shell">
       <div class="results-stack">
         <header class="results-header">
-          <p class="eyebrow">Results and review</p>
+          <p class="eyebrow">Quiz complete</p>
           <h2 class="results-title">${escapeHtml(state.quiz.title)}</h2>
           <p class="results-caption">
-            Objective grading is complete. You can review each answer, copy a plain-text summary,
-            or export the result payload for a submission workflow.
+            Your quiz has been submitted. Review your answers below, or download a copy if your instructor asks for one.
           </p>
           <div class="results-metrics">
             <div class="metric-card">
@@ -358,9 +361,9 @@ function renderResults() {
 
         <div class="result-actions">
           <button class="primary-button" id="copy-summary-button" type="button">Copy summary</button>
-          <button class="secondary-button" id="download-text-button" type="button">Export text</button>
-          <button class="secondary-button" id="download-json-button" type="button">Export JSON</button>
-          <button class="ghost-button" id="retake-button" type="button">Retake quiz</button>
+          <button class="secondary-button" id="download-text-button" type="button">Download summary</button>
+          <button class="secondary-button" id="download-json-button" type="button">Download results (JSON)</button>
+          <button class="ghost-button" id="retake-button" type="button">Take quiz again</button>
         </div>
 
         <section class="review-list">
@@ -403,13 +406,13 @@ function renderResults() {
       await navigator.clipboard.writeText(summaryText);
       setStatus("Summary copied to the clipboard.", "success");
     } catch (error) {
-      setStatus("Clipboard copy failed in this browser. Use Export text instead.", "error");
+      setStatus("Clipboard copy failed in this browser. Use Download summary instead.", "error");
     }
   });
 
   rootElement.querySelector("#download-text-button").addEventListener("click", () => {
     createDownload(`${state.quiz.id}-results.txt`, `${summaryText}\n`, "text/plain;charset=utf-8");
-    setStatus("Plain-text summary downloaded.", "success");
+    setStatus("Summary downloaded.", "success");
   });
 
   rootElement.querySelector("#download-json-button").addEventListener("click", () => {
@@ -418,7 +421,7 @@ function renderResults() {
       `${JSON.stringify(exportPayload, null, 2)}\n`,
       "application/json;charset=utf-8"
     );
-    setStatus("JSON export downloaded.", "success");
+    setStatus("Results file downloaded.", "success");
   });
 
   rootElement.querySelector("#retake-button").addEventListener("click", () => {
@@ -427,14 +430,15 @@ function renderResults() {
     state.submittedAt = null;
     state.currentQuestionIndex = 0;
     render();
-    setStatus("Retake started. Previous answers were cleared locally.", "success");
+    setStatus("You can take the quiz again now. Previous answers were cleared from this browser.", "success");
   });
 }
 
 function renderEmptyState(title, description) {
+  renderHero();
   rootElement.innerHTML = `
     <section class="empty-state">
-      <p class="eyebrow">Quiz pack error</p>
+      <p class="eyebrow">Quiz unavailable</p>
       <h2>${escapeHtml(title)}</h2>
       <p class="sidebar-text">${escapeHtml(description)}</p>
     </section>
@@ -442,10 +446,11 @@ function renderEmptyState(title, description) {
 }
 
 function render() {
+  renderHero();
   renderSidebar();
 
   if (!state.quiz) {
-    renderEmptyState("No quiz loaded", "Choose a pack from the menu to begin.");
+    renderEmptyState("No quiz loaded", "Choose a quiz from the menu to begin.");
     return;
   }
 
@@ -473,14 +478,14 @@ function submitQuiz() {
   state.submittedAt = new Date();
   state.grade = gradeQuiz(state.quiz, state.answers);
   render();
-  setStatus("Quiz graded locally. Review and export tools are ready.", "success");
+  setStatus("Quiz submitted. Your results are ready below.", "success");
 }
 
 async function loadCatalog() {
   const response = await fetch("quizzes/catalog.json");
 
   if (!response.ok) {
-    throw new Error("Unable to load quiz catalog.");
+    throw new Error("Unable to load the quiz list.");
   }
 
   state.catalog = await response.json();
@@ -503,7 +508,7 @@ async function loadQuiz(path) {
   const response = await fetch(path);
 
   if (!response.ok) {
-    throw new Error(`Unable to load quiz pack at ${path}.`);
+    throw new Error("Unable to load that quiz.");
   }
 
   const rawQuiz = await response.json();
@@ -531,18 +536,12 @@ function bindGlobalControls() {
       await loadQuiz(nextPath);
     } catch (error) {
       setStatus(error.message, "error");
-      renderEmptyState("Could not load quiz pack", error.message);
+      renderEmptyState("Could not load quiz", error.message);
     }
-  });
-
-  themeToggle.addEventListener("click", () => {
-    const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-    applyTheme(nextTheme);
   });
 }
 
 async function init() {
-  applyTheme(getStoredTheme());
   bindGlobalControls();
 
   try {
@@ -555,7 +554,7 @@ async function init() {
     await loadQuiz(requestedPack);
   } catch (error) {
     setStatus(error.message, "error");
-    renderEmptyState("Quiz player failed to initialize", error.message);
+    renderEmptyState("Quiz failed to initialize", error.message);
   }
 }
 

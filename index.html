@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Signal Path Quiz Player</title>
+    <title>Quiz</title>
     <meta
       name="description"
-      content="Static, schema-driven quiz player for GitHub Pages with audio support, grading, and review."
+      content="Take your quiz, answer honestly, and review your results when you finish."
     >
     <link rel="stylesheet" href="styles.css">
   </head>
@@ -14,21 +14,24 @@
     <div class="page-shell">
       <header class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Schema-Driven Quiz MVP</p>
-          <h1>Signal Path</h1>
-          <p class="hero-text">
-            A front-end-only quiz player for classroom listening checks, review quizzes,
-            and GitHub Pages deployments.
+          <p class="eyebrow" id="hero-eyebrow">Student quiz</p>
+          <h1 id="hero-title">Take your quiz</h1>
+          <p class="hero-text" id="hero-text">
+            Read each prompt carefully, listen when audio appears, and answer each question on your own.
+          </p>
+          <p class="honesty-note">
+            Please don&apos;t cheat. Your grade is probably full credit for participation, so it
+            doesn&apos;t help if you use AI to cheat. Be honest.
           </p>
         </div>
         <div class="hero-actions">
           <label class="control-group">
-            <span>Example pack</span>
-            <select id="quiz-picker" aria-label="Select quiz pack"></select>
+            <span>Choose a quiz</span>
+            <select id="quiz-picker" aria-label="Select quiz"></select>
           </label>
-          <button id="theme-toggle" class="ghost-button" type="button">
-            Toggle theme
-          </button>
+          <p class="control-help">
+            Pick the quiz your instructor assigned, then work through the questions at your own pace.
+          </p>
         </div>
       </header>
 
