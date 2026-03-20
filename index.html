@@ -8,7 +8,7 @@
       name="description"
       content="Take your quiz, answer honestly, and review your results when you finish."
     >
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=2">
   </head>
   <body>
     <div class="page-shell">
@@ -24,13 +24,16 @@
             doesn&apos;t help if you use AI to cheat. Be honest.
           </p>
         </div>
-        <div class="hero-actions">
+        <div class="hero-actions" id="hero-actions">
           <label class="control-group">
             <span>Choose a quiz</span>
-            <select id="quiz-picker" aria-label="Select quiz"></select>
+            <select id="quiz-picker" aria-label="Select quiz">
+              <option value="">— Select a quiz —</option>
+            </select>
           </label>
-          <p class="control-help">
-            Pick the quiz your instructor assigned, then work through the questions at your own pace.
+          <button id="load-quiz-btn" class="primary-button" type="button" disabled>Load quiz</button>
+          <p class="control-help" id="hero-help">
+            Pick the quiz your instructor assigned, then click Load to begin.
           </p>
         </div>
       </header>
@@ -38,12 +41,11 @@
       <main class="app-layout">
         <aside class="sidebar" id="sidebar"></aside>
         <section class="stage">
-          <div id="status-banner" class="status-banner" role="status" aria-live="polite"></div>
           <div id="app-root" class="app-root" aria-live="polite"></div>
         </section>
       </main>
     </div>
 
-    <script type="module" src="app.mjs"></script>
+    <script type="module" src="app.mjs?v=2"></script>
   </body>
 </html>

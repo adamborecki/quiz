@@ -9,14 +9,7 @@ import {
   validateQuizPack,
 } from "./quiz-core.mjs";
 
-const sidebarElement = document.querySelector("#sidebar");
-const rootElement = document.querySelector("#app-root");
-const statusBanner = document.querySelector("#status-banner");
-const quizPicker = document.querySelector("#quiz-picker");
-const heroEyebrow = document.querySelector("#hero-eyebrow");
-const heroTitle = document.querySelector("#hero-title");
-const heroText = document.querySelector("#hero-text");
-const defaultPackPath = "quizzes/mus347-quiz2.json";
+// ─── Constants ───────────────────────────────────────────────────────────────
 
 const LIKERT_OPTIONS = [
   { id: "very-confident", label: "Very confident" },
@@ -26,21 +19,38 @@ const LIKERT_OPTIONS = [
   { id: "not-confident-at-all", label: "Not confident at all" },
 ];
 
+const CHOICE_LETTERS = "ABCDEFGHIJ";
+
+// ─── DOM ─────────────────────────────────────────────────────────────────────
+
+const sidebarEl = document.querySelector("#sidebar");
+const rootEl = document.querySelector("#app-root");
+const quizPicker = document.querySelector("#quiz-picker");
+const loadQuizBtn = document.querySelector("#load-quiz-btn");
+const heroEyebrow = document.querySelector("#hero-eyebrow");
+const heroTitle = document.querySelector("#hero-title");
+const heroText = document.querySelector("#hero-text");
+const heroActions = document.querySelector("#hero-actions");
+
+// ─── State ───────────────────────────────────────────────────────────────────
+
 const state = {
   catalog: [],
-  selectedPackPath: defaultPackPath,
+  selectedPackPath: null,
   quiz: null,
   answers: {},
   currentQuestionIndex: 0,
   grade: null,
   submittedAt: null,
-  phase: "intro",
+  phase: "select",
   reflections: {},
   attempts: [],
   hintUsage: {},
   questionTimestamps: {},
   quizStartedAt: null,
 };
+
+// ─── Utilities ───────────────────────────────────────────────────────────────
 
 function escapeHtml(value) {
   return String(value)
@@ -51,17 +61,13 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
-function setStatus(message = "", tone = "") {
-  statusBanner.textContent = message;
-  statusBanner.className = "status-banner";
-
-  if (tone) {
-    statusBanner.classList.add(`is-${tone}`);
-  }
-}
-
-function getPackLabel(path) {
-  return state.catalog.find((pack) => pack.path === path)?.title ?? path;
+function formatDuration(ms) {
+  if (!ms || ms < 0) return "—";
+  const seconds = Math.round(ms / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remainder = seconds % 60;
+  return `${minutes}m ${remainder}s`;
 }
 
 function updateQueryString(path) {
@@ -80,45 +86,159 @@ function createDownload(filename, content, mimeType) {
   URL.revokeObjectURL(downloadUrl);
 }
 
-function formatDuration(ms) {
-  if (!ms || ms < 0) return "—";
-  const seconds = Math.round(ms / 1000);
-  if (seconds < 60) return `${seconds}s`;
-  const minutes = Math.floor(seconds / 60);
-  const remainder = seconds % 60;
-  return `${minutes}m ${remainder}s`;
+// ─── Toast Notifications ─────────────────────────────────────────────────────
+
+let toastContainer = null;
+
+function showToast(message, type = "info") {
+  if (!toastContainer) {
+    toastContainer = document.createElement("div");
+    toastContainer.id = "toast-container";
+    document.body.appendChild(toastContainer);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  toastContainer.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => toast.classList.add("toast-visible"));
+  });
+
+  setTimeout(() => {
+    toast.classList.remove("toast-visible");
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
 }
+
+// ─── Auto-Save ───────────────────────────────────────────────────────────────
+
+function autoSave() {
+  if (!state.quiz) return;
+  const data = {
+    answers: state.answers,
+    reflections: state.reflections,
+    hintUsage: state.hintUsage,
+    questionTimestamps: state.questionTimestamps,
+    phase: state.phase,
+    currentQuestionIndex: state.currentQuestionIndex,
+    quizStartedAt: state.quizStartedAt instanceof Date ? state.quizStartedAt.toISOString() : state.quizStartedAt,
+    grade: state.grade,
+    submittedAt: state.submittedAt instanceof Date ? state.submittedAt.toISOString() : state.submittedAt,
+  };
+  window.localStorage.setItem(`quiz-save-${state.quiz.id}`, JSON.stringify(data));
+}
+
+function loadSave(quizId) {
+  const raw = window.localStorage.getItem(`quiz-save-${quizId}`);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function clearSave() {
+  if (state.quiz) {
+    window.localStorage.removeItem(`quiz-save-${state.quiz.id}`);
+  }
+}
+
+// ─── Attempt Storage ─────────────────────────────────────────────────────────
 
 function saveAttemptsToStorage() {
   if (!state.quiz) return;
   const key = `quiz-attempts-${state.quiz.id}`;
-  const data = state.attempts.map((attempt) => ({
-    ...attempt,
-    submittedAt: attempt.submittedAt instanceof Date ? attempt.submittedAt.toISOString() : attempt.submittedAt,
-    quizStartedAt: attempt.quizStartedAt instanceof Date ? attempt.quizStartedAt.toISOString() : attempt.quizStartedAt,
+  const data = state.attempts.map((a) => ({
+    ...a,
+    submittedAt: a.submittedAt instanceof Date ? a.submittedAt.toISOString() : a.submittedAt,
+    quizStartedAt: a.quizStartedAt instanceof Date ? a.quizStartedAt.toISOString() : a.quizStartedAt,
   }));
   window.localStorage.setItem(key, JSON.stringify(data));
 }
 
 function loadAttemptsFromStorage(quizId) {
-  const key = `quiz-attempts-${quizId}`;
-  const raw = window.localStorage.getItem(key);
+  const raw = window.localStorage.getItem(`quiz-attempts-${quizId}`);
   if (!raw) return [];
   try {
-    return JSON.parse(raw).map((attempt) => ({
-      ...attempt,
-      submittedAt: new Date(attempt.submittedAt),
-      quizStartedAt: attempt.quizStartedAt ? new Date(attempt.quizStartedAt) : null,
+    return JSON.parse(raw).map((a) => ({
+      ...a,
+      submittedAt: new Date(a.submittedAt),
+      quizStartedAt: a.quizStartedAt ? new Date(a.quizStartedAt) : null,
     }));
   } catch {
     return [];
   }
 }
 
-function saveCanvasTextToStorage(text) {
+function saveCanvasText(text) {
   if (!state.quiz) return;
   window.localStorage.setItem(`quiz-canvas-${state.quiz.id}`, text);
 }
+
+// ─── Progress Helpers ────────────────────────────────────────────────────────
+
+function getCategoryProgress() {
+  if (!state.quiz) return [];
+  const map = new Map();
+
+  for (const q of state.quiz.questions) {
+    for (const cat of q.categories) {
+      if (!map.has(cat)) map.set(cat, { name: cat, total: 0, answered: 0 });
+      const entry = map.get(cat);
+      entry.total++;
+      if (state.answers[q.id]) entry.answered++;
+    }
+  }
+
+  return [...map.values()];
+}
+
+function getUnansweredCount() {
+  if (!state.quiz) return 0;
+  return state.quiz.questions.filter((q) => !state.answers[q.id]).length;
+}
+
+function getAllAnswered() {
+  return state.quiz && getUnansweredCount() === 0;
+}
+
+// ─── Timing ──────────────────────────────────────────────────────────────────
+
+function recordQuestionEnter() {
+  if (!state.quiz) return;
+  const q = state.quiz.questions[state.currentQuestionIndex];
+  if (!state.questionTimestamps[q.id]) {
+    state.questionTimestamps[q.id] = { start: Date.now(), end: null };
+  }
+  state.questionTimestamps[q.id].lastEnter = Date.now();
+}
+
+function recordQuestionLeave() {
+  if (!state.quiz) return;
+  const q = state.quiz.questions[state.currentQuestionIndex];
+  const ts = state.questionTimestamps[q.id];
+  if (ts) ts.end = Date.now();
+}
+
+// ─── Quiz Picker Lock ────────────────────────────────────────────────────────
+
+function lockPicker() {
+  if (quizPicker) quizPicker.disabled = true;
+  if (loadQuizBtn) loadQuizBtn.style.display = "none";
+}
+
+function unlockPicker() {
+  if (quizPicker) quizPicker.disabled = false;
+  if (loadQuizBtn) {
+    loadQuizBtn.style.display = "";
+    loadQuizBtn.disabled = !quizPicker?.value;
+  }
+}
+
+// ─── Rendering: Hero ─────────────────────────────────────────────────────────
 
 function renderHero() {
   if (!state.quiz) {
@@ -130,22 +250,25 @@ function renderHero() {
     return;
   }
 
-  const questionLabel = state.quiz.questions.length === 1 ? "question" : "questions";
+  const total = state.quiz.questions.length;
+  const ql = total === 1 ? "question" : "questions";
   document.title = `${state.quiz.title} | Quiz`;
-  heroEyebrow.textContent = "You're taking a quiz";
+  heroEyebrow.textContent = state.quiz.course || "Student quiz";
   heroTitle.textContent = state.quiz.title;
-  heroText.textContent = `Work at your own pace, listen carefully, and answer honestly. This quiz has ${state.quiz.questions.length} ${questionLabel}.`;
+  heroText.textContent = `${total} ${ql}. Work at your own pace, listen carefully, and answer honestly.`;
 }
 
+// ─── Rendering: Sidebar ──────────────────────────────────────────────────────
+
 function renderSidebar() {
-  if (!state.quiz) {
-    sidebarElement.innerHTML = `
+  if (!state.quiz || state.phase === "select") {
+    sidebarEl.innerHTML = `
       <div class="sidebar-panel">
         <div class="sidebar-stack">
           <section class="sidebar-section">
-            <p class="eyebrow">Loading</p>
-            <h2 class="sidebar-title">Getting your quiz ready</h2>
-            <p class="sidebar-text">Loading the selected quiz so you can begin.</p>
+            <p class="eyebrow">Welcome</p>
+            <h2 class="sidebar-title">Get started</h2>
+            <p class="sidebar-text">Choose a quiz from the menu above, then click Load to begin.</p>
           </section>
         </div>
       </div>
@@ -154,13 +277,13 @@ function renderSidebar() {
   }
 
   if (state.phase === "intro") {
-    sidebarElement.innerHTML = `
+    sidebarEl.innerHTML = `
       <div class="sidebar-panel">
         <div class="sidebar-stack">
           <section class="sidebar-section">
-            <p class="eyebrow">${escapeHtml(state.quiz.course || "Student quiz")}</p>
+            <p class="eyebrow">${escapeHtml(state.quiz.course || "Quiz")}</p>
             <h2 class="sidebar-title">Before you begin</h2>
-            <p class="sidebar-text">Answer a couple of quick reflection questions, then you'll start the quiz.</p>
+            <p class="sidebar-text">${escapeHtml(state.quiz.instructions)}</p>
             <div class="meta-row">
               ${state.quiz.topic ? `<span class="meta-pill">${escapeHtml(state.quiz.topic)}</span>` : ""}
               <span class="meta-pill">${state.quiz.questions.length} questions</span>
@@ -174,13 +297,13 @@ function renderSidebar() {
   }
 
   if (state.phase === "outro") {
-    sidebarElement.innerHTML = `
+    sidebarEl.innerHTML = `
       <div class="sidebar-panel">
         <div class="sidebar-stack">
           <section class="sidebar-section">
             <p class="eyebrow">Almost done</p>
             <h2 class="sidebar-title">Quick check-in</h2>
-            <p class="sidebar-text">One more reflection before you see your results.</p>
+            <p class="sidebar-text">One more reflection, then you'll see your results.</p>
           </section>
         </div>
       </div>
@@ -189,7 +312,7 @@ function renderSidebar() {
   }
 
   if (state.phase === "results") {
-    sidebarElement.innerHTML = `
+    sidebarEl.innerHTML = `
       <div class="sidebar-panel">
         <div class="sidebar-stack">
           <section class="sidebar-section">
@@ -197,8 +320,7 @@ function renderSidebar() {
             <h2 class="sidebar-title">Your results</h2>
             <div class="results-card">
               <span class="metric-label">Score</span>
-              <strong class="metric-value">${state.grade.correctCount}/${state.grade.totalQuestions}</strong>
-              <p class="sidebar-text">Review your answers, then copy your submission for Canvas.</p>
+              <strong class="metric-value">${state.grade.correctCount}/${state.grade.totalQuestions} (${state.grade.scorePercent}%)</strong>
             </div>
           </section>
           ${state.attempts.length > 0 ? `
@@ -215,145 +337,86 @@ function renderSidebar() {
     return;
   }
 
-  // Quiz phase
-  const answeredCount = countAnsweredQuestions(state.quiz, state.answers);
-  const progressPercent = Math.round(((state.currentQuestionIndex + 1) / state.quiz.questions.length) * 100);
-  const currentQuestion = state.quiz.questions[state.currentQuestionIndex];
+  // ─── Quiz phase sidebar ───
+  const answered = countAnsweredQuestions(state.quiz, state.answers);
+  const total = state.quiz.questions.length;
+  const remaining = total - answered;
+  const progressPct = Math.round((answered / total) * 100);
+  const categories = getCategoryProgress();
 
-  sidebarElement.innerHTML = `
+  sidebarEl.innerHTML = `
     <div class="sidebar-panel">
       <div class="sidebar-stack">
         <section class="sidebar-section">
-          <p class="eyebrow">${escapeHtml(state.quiz.course || "Student quiz")}</p>
-          <h2 class="sidebar-title">Quiz details</h2>
-          <p class="sidebar-text">${escapeHtml(state.quiz.instructions || "Answer each question on your own and submit when you're finished.")}</p>
-          <div class="meta-row">
-            ${state.quiz.topic ? `<span class="meta-pill">${escapeHtml(state.quiz.topic)}</span>` : ""}
-            ${state.quiz.version ? `<span class="meta-pill">v${escapeHtml(state.quiz.version)}</span>` : ""}
-            <span class="meta-pill">${state.quiz.questions.length} questions</span>
-            ${state.attempts.length > 0 ? `<span class="meta-pill">Attempt ${state.attempts.length + 1}</span>` : ""}
+          <p class="eyebrow">${escapeHtml(state.quiz.course || "Quiz")}</p>
+          <h2 class="sidebar-title">Progress</h2>
+          <div class="progress-label">
+            <span>${answered} of ${total} answered</span>
+            <span>${remaining > 0 ? `${remaining} left` : "All done!"}</span>
           </div>
+          <div class="progress-bar" aria-hidden="true">
+            <span style="width: ${progressPct}%"></span>
+          </div>
+          ${state.attempts.length > 0 ? `<p class="sidebar-text">Attempt ${state.attempts.length + 1}</p>` : ""}
         </section>
 
         <section class="sidebar-section">
-          <div class="progress-label">
-            <span>Progress</span>
-            <span>${state.currentQuestionIndex + 1}/${state.quiz.questions.length}</span>
+          <strong class="sidebar-label">Categories</strong>
+          <div class="category-progress">
+            ${categories.map((c) => `
+              <div class="category-row ${c.answered === c.total ? "is-complete" : ""}">
+                <span class="category-name">${escapeHtml(c.name)}</span>
+                <span class="category-count">${c.answered}/${c.total}</span>
+              </div>
+            `).join("")}
           </div>
-          <div class="progress-bar" aria-hidden="true">
-            <span style="width: ${progressPercent}%"></span>
-          </div>
-          <p class="sidebar-text">
-            ${answeredCount} answered, ${state.quiz.questions.length - answeredCount} remaining.
-          </p>
         </section>
 
         <section class="sidebar-section">
           <div class="question-jump-grid" aria-label="Question navigation">
-            ${state.quiz.questions
-              .map(
-                (question, index) => `
-                  <button
-                    class="question-jump ${index === state.currentQuestionIndex ? "is-current" : ""} ${
-                      state.answers[question.id] ? "is-answered" : ""
-                    }"
-                    type="button"
-                    data-jump-index="${index}"
-                    aria-label="Jump to question ${index + 1}"
-                  >
-                    ${index + 1}
-                  </button>
-                `
-              )
-              .join("")}
-          </div>
-        </section>
-
-        <section class="sidebar-section">
-          <div class="results-card">
-            <span class="metric-label">Current question</span>
-            <strong class="metric-value">${escapeHtml(currentQuestion.type.replaceAll("_", " "))}</strong>
-            <p class="sidebar-text">Answer every question before you submit. Use the numbered buttons to move around anytime.</p>
+            ${state.quiz.questions.map((q, i) => `
+              <button
+                class="question-jump ${i === state.currentQuestionIndex ? "is-current" : ""} ${state.answers[q.id] ? "is-answered" : ""}"
+                type="button"
+                data-jump-index="${i}"
+                aria-label="Question ${i + 1}${state.answers[q.id] ? " (answered)" : ""}"
+              >${i + 1}</button>
+            `).join("")}
           </div>
         </section>
       </div>
     </div>
   `;
 
-  sidebarElement.querySelectorAll("[data-jump-index]").forEach((button) => {
-    button.addEventListener("click", () => {
+  sidebarEl.querySelectorAll("[data-jump-index]").forEach((btn) => {
+    btn.addEventListener("click", () => {
       recordQuestionLeave();
-      state.currentQuestionIndex = Number(button.dataset.jumpIndex);
+      state.currentQuestionIndex = Number(btn.dataset.jumpIndex);
       recordQuestionEnter();
       render();
-      setStatus("");
     });
   });
 }
 
-function renderMedia(question) {
-  if (!question.media.length) {
-    return "";
-  }
+// ─── Rendering: Select (no quiz loaded) ──────────────────────────────────────
 
-  return question.media
-    .map(
-      (media) => `
-        <div class="media-card">
-          <strong>${escapeHtml(media.title || "Audio example")}</strong>
-          ${media.caption ? `<p class="sidebar-text">${escapeHtml(media.caption)}</p>` : ""}
-          <audio controls preload="metadata" src="${escapeHtml(media.resolvedSrc)}"></audio>
-        </div>
-      `
-    )
-    .join("");
-}
-
-function renderHintButton(question) {
-  if (!state.quiz.settings.enableHints || !question.hint) {
-    return "";
-  }
-
-  const alreadyRevealed = state.hintUsage[question.id];
-
-  if (alreadyRevealed) {
-    return `
-      <div class="hint-revealed">
-        <strong class="hint-label">Hint</strong>
-        <p class="sidebar-text">${escapeHtml(question.hint)}</p>
-      </div>
-    `;
-  }
-
-  return `
-    <button class="secondary-button hint-button" id="hint-button" type="button">Show hint</button>
+function renderSelect() {
+  rootEl.innerHTML = `
+    <section class="empty-state">
+      <p class="eyebrow">No quiz loaded</p>
+      <h2>Choose a quiz to begin</h2>
+      <p class="sidebar-text">Select your assigned quiz from the dropdown above and click <strong>Load quiz</strong>.</p>
+    </section>
   `;
 }
 
-function recordQuestionEnter() {
-  const question = state.quiz.questions[state.currentQuestionIndex];
-  if (!state.questionTimestamps[question.id]) {
-    state.questionTimestamps[question.id] = { start: Date.now(), end: null };
-  } else if (!state.questionTimestamps[question.id].lastEnter) {
-    state.questionTimestamps[question.id].lastEnter = Date.now();
-  } else {
-    state.questionTimestamps[question.id].lastEnter = Date.now();
-  }
-}
-
-function recordQuestionLeave() {
-  const question = state.quiz.questions[state.currentQuestionIndex];
-  const ts = state.questionTimestamps[question.id];
-  if (ts) {
-    ts.end = Date.now();
-  }
-}
+// ─── Rendering: Intro ────────────────────────────────────────────────────────
 
 function renderIntro() {
   const preFeeling = state.reflections["pre-feeling"] ?? "";
   const prePrep = state.reflections["pre-prep"] ?? "";
 
-  rootElement.innerHTML = `
+  rootEl.innerHTML = `
     <section class="question-card">
       <div class="stage-stack">
         <header class="question-header">
@@ -363,93 +426,106 @@ function renderIntro() {
         </header>
 
         <div class="reflection-group">
-          <label class="reflection-label" for="pre-feeling">How are you feeling about this quiz?</label>
+          <label class="reflection-label">How are you feeling about this quiz?</label>
           <div class="likert-options" id="pre-feeling-options">
-            ${LIKERT_OPTIONS.map(
-              (opt) => `
-                <div class="question-option">
-                  <input
-                    id="pre-feeling-${escapeHtml(opt.id)}"
-                    type="radio"
-                    name="pre-feeling"
-                    value="${escapeHtml(opt.id)}"
-                    ${preFeeling === opt.id ? "checked" : ""}
-                  >
-                  <label for="pre-feeling-${escapeHtml(opt.id)}">
-                    <span>${escapeHtml(opt.label)}</span>
-                  </label>
-                </div>
-              `
-            ).join("")}
+            ${LIKERT_OPTIONS.map((opt) => `
+              <label class="likert-option ${preFeeling === opt.id ? "is-selected" : ""}">
+                <input type="radio" name="pre-feeling" value="${escapeHtml(opt.id)}" ${preFeeling === opt.id ? "checked" : ""}>
+                <span>${escapeHtml(opt.label)}</span>
+              </label>
+            `).join("")}
           </div>
         </div>
 
         <div class="reflection-group">
           <label class="reflection-label" for="pre-prep">What did you do to prepare, if anything?</label>
-          <textarea
-            id="pre-prep"
-            class="reflection-textarea"
-            placeholder="E.g., reviewed notes, listened to examples, nothing yet..."
-            rows="3"
-          >${escapeHtml(prePrep)}</textarea>
+          <textarea id="pre-prep" class="reflection-textarea" placeholder="E.g., reviewed notes, listened to examples, nothing yet..." rows="3">${escapeHtml(prePrep)}</textarea>
         </div>
 
         <div class="question-actions">
-          <div class="nav-group"></div>
-          <button class="primary-button" id="start-quiz-button" type="button">
-            Start the quiz
-          </button>
+          <button class="primary-button full-width" id="start-quiz-btn" type="button">Start the quiz</button>
         </div>
       </div>
     </section>
   `;
 
-  rootElement.querySelector("#pre-feeling-options").addEventListener("change", (event) => {
-    state.reflections["pre-feeling"] = event.target.value;
+  rootEl.querySelector("#pre-feeling-options").addEventListener("change", (e) => {
+    state.reflections["pre-feeling"] = e.target.value;
+    rootEl.querySelectorAll(".likert-option").forEach((el) => {
+      el.classList.toggle("is-selected", el.querySelector("input").checked);
+    });
+    autoSave();
   });
 
-  rootElement.querySelector("#pre-prep").addEventListener("input", (event) => {
-    state.reflections["pre-prep"] = event.target.value;
+  rootEl.querySelector("#pre-prep").addEventListener("input", (e) => {
+    state.reflections["pre-prep"] = e.target.value;
+    autoSave();
   });
 
-  rootElement.querySelector("#start-quiz-button").addEventListener("click", () => {
+  rootEl.querySelector("#start-quiz-btn").addEventListener("click", () => {
     if (!state.reflections["pre-feeling"]) {
-      setStatus("Please share how you're feeling before starting.", "error");
+      showToast("Please share how you're feeling before starting.", "error");
       return;
     }
     if (!state.reflections["pre-prep"]?.trim()) {
-      setStatus("Please share what you did to prepare (even if nothing).", "error");
+      showToast("Please share what you did to prepare (even if nothing).", "error");
       return;
     }
-
     state.phase = "quiz";
     state.quizStartedAt = new Date();
     state.currentQuestionIndex = 0;
     recordQuestionEnter();
+    autoSave();
     render();
-    setStatus("Good luck! Work through the questions at your own pace.", "success");
+    showToast("Good luck! Work through the questions at your own pace.", "success");
   });
 }
+
+// ─── Rendering: Media & Hints ────────────────────────────────────────────────
+
+function renderMedia(question) {
+  if (!question.media.length) return "";
+  return question.media.map((m) => `
+    <div class="media-card">
+      <strong>${escapeHtml(m.title || "Audio example")}</strong>
+      ${m.caption ? `<p class="sidebar-text">${escapeHtml(m.caption)}</p>` : ""}
+      <audio controls preload="metadata" src="${escapeHtml(m.resolvedSrc)}"></audio>
+    </div>
+  `).join("");
+}
+
+function renderHintButton(question) {
+  if (!state.quiz.settings.enableHints || !question.hint) return "";
+  if (state.hintUsage[question.id]) {
+    return `
+      <div class="hint-revealed">
+        <strong class="hint-label">Hint</strong>
+        <p class="sidebar-text">${escapeHtml(question.hint)}</p>
+      </div>
+    `;
+  }
+  return `<button class="secondary-button hint-button" id="hint-btn" type="button">Show hint</button>`;
+}
+
+// ─── Rendering: Question ─────────────────────────────────────────────────────
 
 function renderQuestion() {
   const question = state.quiz.questions[state.currentQuestionIndex];
   const selectedAnswer = state.answers[question.id] ?? "";
-  const isLastQuestion = state.currentQuestionIndex === state.quiz.questions.length - 1;
+  const isFirst = state.currentQuestionIndex === 0;
+  const isLast = state.currentQuestionIndex === state.quiz.questions.length - 1;
+  const remaining = getUnansweredCount();
+  const allDone = remaining === 0;
 
-  rootElement.innerHTML = `
+  rootEl.innerHTML = `
     <article class="question-card">
       <div class="stage-stack">
         <header class="question-header">
-          <span class="question-kind">${escapeHtml(question.type.replaceAll("_", " "))}</span>
-          <h2 class="question-title">Question ${state.currentQuestionIndex + 1}</h2>
-          <p class="question-caption">${escapeHtml(question.prompt)}</p>
-          ${
-            question.categories.length
-              ? `<div class="tag-row">${question.categories
-                  .map((category) => `<span class="tag-pill">${escapeHtml(category)}</span>`)
-                  .join("")}</div>`
-              : ""
-          }
+          <div class="question-meta-row">
+            <span class="question-number">Question ${state.currentQuestionIndex + 1} of ${state.quiz.questions.length}</span>
+            ${question.categories.length ? question.categories.map((c) => `<span class="tag-pill">${escapeHtml(c)}</span>`).join("") : ""}
+          </div>
+          <h2 class="question-title">${escapeHtml(question.prompt)}</h2>
         </header>
 
         ${renderMedia(question)}
@@ -457,94 +533,93 @@ function renderQuestion() {
         <form id="question-form" class="question-choices">
           <fieldset class="question-choices">
             <legend class="sr-only">Answer choices</legend>
-            ${question.choices
-              .map(
-                (choice) => `
-                  <div class="question-option">
-                    <input
-                      id="choice-${escapeHtml(question.id)}-${escapeHtml(choice.id)}"
-                      type="radio"
-                      name="answer"
-                      value="${escapeHtml(choice.id)}"
-                      ${selectedAnswer === choice.id ? "checked" : ""}
-                    >
-                    <label for="choice-${escapeHtml(question.id)}-${escapeHtml(choice.id)}">
-                      <span class="option-id">${escapeHtml(choice.id)}</span>
-                      <span>${escapeHtml(choice.label)}</span>
-                    </label>
-                  </div>
-                `
-              )
-              .join("")}
+            ${question.choices.map((choice, ci) => `
+              <label class="choice-option ${selectedAnswer === choice.id ? "is-selected" : ""}">
+                <input type="radio" name="answer" value="${escapeHtml(choice.id)}" ${selectedAnswer === choice.id ? "checked" : ""}>
+                <span class="choice-letter">${CHOICE_LETTERS[ci]}</span>
+                <span class="choice-text">${escapeHtml(choice.label)}</span>
+              </label>
+            `).join("")}
           </fieldset>
         </form>
 
         ${renderHintButton(question)}
 
-        <div class="question-actions">
+        <div class="question-nav">
           <div class="nav-group">
-            <button class="nav-button" id="prev-button" type="button" ${
-              state.currentQuestionIndex === 0 ? "disabled" : ""
-            }>
-              Previous
-            </button>
-            <button class="nav-button" id="next-button" type="button">
-              ${isLastQuestion ? "Stay on last question" : "Next question"}
-            </button>
+            <button class="nav-button" id="prev-btn" type="button" ${isFirst ? "disabled" : ""}>Previous</button>
+            <button class="nav-button" id="next-btn" type="button" ${isLast ? "disabled" : ""}>Next</button>
           </div>
-          <button class="primary-button" id="submit-button" type="button">
-            Submit quiz
-          </button>
+          ${allDone
+            ? `<button class="primary-button" id="submit-btn" type="button">Submit quiz</button>`
+            : `<span class="remaining-count">${remaining} question${remaining === 1 ? "" : "s"} remaining</span>`
+          }
         </div>
       </div>
     </article>
   `;
 
-  rootElement.querySelector("#question-form").addEventListener("change", (event) => {
-    const selectedValue = event.target.value;
-    state.answers[question.id] = selectedValue;
+  rootEl.querySelector("#question-form").addEventListener("change", (e) => {
+    state.answers[question.id] = e.target.value;
+    rootEl.querySelectorAll(".choice-option").forEach((el) => {
+      el.classList.toggle("is-selected", el.querySelector("input").checked);
+    });
     renderSidebar();
-    setStatus("Answer saved.", "success");
+    autoSave();
+    showToast("Answer saved", "success");
+
+    // Update remaining count or show submit button
+    const newRemaining = getUnansweredCount();
+    if (newRemaining === 0) {
+      render();
+      showToast("All questions answered — ready to submit!", "success");
+    } else {
+      const countEl = rootEl.querySelector(".remaining-count");
+      if (countEl) countEl.textContent = `${newRemaining} question${newRemaining === 1 ? "" : "s"} remaining`;
+    }
   });
 
-  rootElement.querySelector("#prev-button").addEventListener("click", () => {
+  rootEl.querySelector("#prev-btn").addEventListener("click", () => {
     if (state.currentQuestionIndex > 0) {
       recordQuestionLeave();
       state.currentQuestionIndex -= 1;
       recordQuestionEnter();
-      setStatus("");
+      autoSave();
       render();
     }
   });
 
-  rootElement.querySelector("#next-button").addEventListener("click", () => {
+  rootEl.querySelector("#next-btn").addEventListener("click", () => {
     if (state.currentQuestionIndex < state.quiz.questions.length - 1) {
       recordQuestionLeave();
       state.currentQuestionIndex += 1;
       recordQuestionEnter();
-      setStatus("");
+      autoSave();
       render();
-      return;
     }
-
-    setStatus("You are already on the final question.", "success");
   });
 
-  rootElement.querySelector("#submit-button").addEventListener("click", submitQuiz);
+  const submitBtn = rootEl.querySelector("#submit-btn");
+  if (submitBtn) {
+    submitBtn.addEventListener("click", submitQuiz);
+  }
 
-  const hintButton = rootElement.querySelector("#hint-button");
-  if (hintButton) {
-    hintButton.addEventListener("click", () => {
+  const hintBtn = rootEl.querySelector("#hint-btn");
+  if (hintBtn) {
+    hintBtn.addEventListener("click", () => {
       state.hintUsage[question.id] = true;
+      autoSave();
       render();
     });
   }
 }
 
+// ─── Rendering: Outro ────────────────────────────────────────────────────────
+
 function renderOutro() {
   const postFeeling = state.reflections["post-feeling"] ?? "";
 
-  rootElement.innerHTML = `
+  rootEl.innerHTML = `
     <section class="question-card">
       <div class="stage-stack">
         <header class="question-header">
@@ -556,50 +631,46 @@ function renderOutro() {
         <div class="reflection-group">
           <label class="reflection-label">How are you feeling now that you've finished?</label>
           <div class="likert-options" id="post-feeling-options">
-            ${LIKERT_OPTIONS.map(
-              (opt) => `
-                <div class="question-option">
-                  <input
-                    id="post-feeling-${escapeHtml(opt.id)}"
-                    type="radio"
-                    name="post-feeling"
-                    value="${escapeHtml(opt.id)}"
-                    ${postFeeling === opt.id ? "checked" : ""}
-                  >
-                  <label for="post-feeling-${escapeHtml(opt.id)}">
-                    <span>${escapeHtml(opt.label)}</span>
-                  </label>
-                </div>
-              `
-            ).join("")}
+            ${LIKERT_OPTIONS.map((opt) => `
+              <label class="likert-option ${postFeeling === opt.id ? "is-selected" : ""}">
+                <input type="radio" name="post-feeling" value="${escapeHtml(opt.id)}" ${postFeeling === opt.id ? "checked" : ""}>
+                <span>${escapeHtml(opt.label)}</span>
+              </label>
+            `).join("")}
           </div>
         </div>
 
+        <div class="canvas-reminder">
+          After you see your results, you'll need to <strong>copy your submission and paste it into Canvas</strong>.
+        </div>
+
         <div class="question-actions">
-          <div class="nav-group"></div>
-          <button class="primary-button" id="see-results-button" type="button">
-            See my results
-          </button>
+          <button class="primary-button full-width" id="see-results-btn" type="button">See my results</button>
         </div>
       </div>
     </section>
   `;
 
-  rootElement.querySelector("#post-feeling-options").addEventListener("change", (event) => {
-    state.reflections["post-feeling"] = event.target.value;
+  rootEl.querySelector("#post-feeling-options").addEventListener("change", (e) => {
+    state.reflections["post-feeling"] = e.target.value;
+    rootEl.querySelectorAll(".likert-option").forEach((el) => {
+      el.classList.toggle("is-selected", el.querySelector("input").checked);
+    });
+    autoSave();
   });
 
-  rootElement.querySelector("#see-results-button").addEventListener("click", () => {
+  rootEl.querySelector("#see-results-btn").addEventListener("click", () => {
     if (!state.reflections["post-feeling"]) {
-      setStatus("Please share how you're feeling before seeing your results.", "error");
+      showToast("Please share how you're feeling before seeing your results.", "error");
       return;
     }
-
     state.phase = "results";
+    autoSave();
     render();
-    setStatus("Here are your results. Review them, then copy your submission for Canvas.", "success");
   });
 }
+
+// ─── Rendering: Results ──────────────────────────────────────────────────────
 
 function renderResults() {
   const postPlan = state.reflections["post-plan"] ?? "";
@@ -615,9 +686,7 @@ function renderResults() {
     submittedAt: state.submittedAt,
   };
 
-  const allAttempts = [...state.attempts, currentAttemptData];
-
-  rootElement.innerHTML = `
+  rootEl.innerHTML = `
     <section class="results-shell">
       <div class="results-stack">
         <header class="results-header">
@@ -648,120 +717,108 @@ function renderResults() {
           </div>
         </header>
 
-        ${
-          state.grade.categoryBreakdown.length
-            ? `
-              <section class="results-card">
-                <strong>Category breakdown</strong>
-                <div class="results-card-list">
-                  ${state.grade.categoryBreakdown
-                    .map(
-                      (bucket) =>
-                        `<span><strong>${escapeHtml(bucket.category)}:</strong> ${bucket.correct}/${bucket.total}</span>`
-                    )
-                    .join("")}
-                </div>
-              </section>
-            `
-            : ""
-        }
+        ${state.grade.categoryBreakdown.length ? `
+          <section class="results-card">
+            <strong>Category breakdown</strong>
+            <div class="results-card-list">
+              ${state.grade.categoryBreakdown.map((b) =>
+                `<span><strong>${escapeHtml(b.category)}:</strong> ${b.correct}/${b.total}</span>`
+              ).join("")}
+            </div>
+          </section>
+        ` : ""}
 
         <section class="review-list">
-          ${state.quiz.questions
-            .map((question, index) => {
-              const selectedAnswer = state.answers[question.id] ?? null;
-              const isCorrect = selectedAnswer === question.correctAnswer;
-              const ts = state.questionTimestamps[question.id];
-              const timeSpent = ts && ts.end && ts.start ? ts.end - ts.start : null;
-              const usedHint = state.hintUsage[question.id] ?? false;
-
-              return `
-                <article class="review-card ${isCorrect ? "is-correct" : "is-incorrect"}">
-                  <div class="review-header">
-                    <div>
-                      <p class="eyebrow">Question ${index + 1}</p>
-                      <h3 class="review-title">${escapeHtml(question.prompt)}</h3>
-                    </div>
-                    <span class="review-status ${isCorrect ? "is-correct" : "is-incorrect"}">
-                      ${isCorrect ? "Correct" : "Incorrect"}
-                    </span>
+          ${state.quiz.questions.map((question, index) => {
+            const sel = state.answers[question.id] ?? null;
+            const isCorrect = sel === question.correctAnswer;
+            const ts = state.questionTimestamps[question.id];
+            const timeSpent = ts && ts.end && ts.start ? ts.end - ts.start : null;
+            const usedHint = state.hintUsage[question.id] ?? false;
+            return `
+              <article class="review-card ${isCorrect ? "is-correct" : "is-incorrect"}">
+                <div class="review-header">
+                  <div>
+                    <p class="eyebrow">Question ${index + 1}${question.categories.length ? ` · ${question.categories.join(", ")}` : ""}</p>
+                    <h3 class="review-title">${escapeHtml(question.prompt)}</h3>
                   </div>
-                  <div class="results-card-list">
-                    <span><strong>Your answer:</strong> ${escapeHtml(getChoiceLabel(question, selectedAnswer))}</span>
-                    <span><strong>Correct answer:</strong> ${escapeHtml(getChoiceLabel(question, question.correctAnswer))}</span>
-                    ${timeSpent ? `<span><strong>Time:</strong> ${formatDuration(timeSpent)}</span>` : ""}
-                    <span><strong>Hint used:</strong> ${usedHint ? "Yes" : "No"}</span>
-                    ${
-                      question.explanation
-                        ? `<span><strong>Explanation:</strong> ${escapeHtml(question.explanation)}</span>`
-                        : ""
-                    }
-                  </div>
-                </article>
-              `;
-            })
-            .join("")}
+                  <span class="review-badge ${isCorrect ? "is-correct" : "is-incorrect"}">
+                    ${isCorrect ? "Correct" : "Incorrect"}
+                  </span>
+                </div>
+                <div class="results-card-list">
+                  <span><strong>Your answer:</strong> ${escapeHtml(getChoiceLabel(question, sel))}</span>
+                  ${!isCorrect ? `<span><strong>Correct answer:</strong> ${escapeHtml(getChoiceLabel(question, question.correctAnswer))}</span>` : ""}
+                  ${timeSpent ? `<span><strong>Time:</strong> ${formatDuration(timeSpent)}</span>` : ""}
+                  ${usedHint ? `<span><strong>Hint used:</strong> Yes</span>` : ""}
+                  ${question.explanation ? `<span class="explanation-text"><strong>Explanation:</strong> ${escapeHtml(question.explanation)}</span>` : ""}
+                </div>
+              </article>
+            `;
+          }).join("")}
         </section>
 
         <section class="reflection-section">
           <div class="reflection-group">
             <label class="reflection-label" for="post-plan">Based on your results, what might you focus on if you study again or retake this quiz?</label>
-            <textarea
-              id="post-plan"
-              class="reflection-textarea"
-              placeholder="E.g., I should review filter types more, practice identifying frequencies..."
-              rows="3"
-            >${escapeHtml(postPlan)}</textarea>
+            <textarea id="post-plan" class="reflection-textarea" placeholder="E.g., I should review filter types more, practice identifying frequencies..." rows="3">${escapeHtml(postPlan)}</textarea>
           </div>
         </section>
 
         <section class="canvas-section">
           <h3 class="canvas-heading">Submit to Canvas</h3>
-          <p class="sidebar-text">Copy the text below and paste it into your Canvas assignment submission.</p>
+          <p class="sidebar-text">Copy the text below and paste it into your Canvas assignment submission. Don't forget this step!</p>
           <div class="canvas-actions">
-            <button class="primary-button" id="copy-canvas-button" type="button">Copy submission for Canvas</button>
-            <button class="secondary-button" id="download-text-button" type="button">Download as text</button>
-            <button class="ghost-button" id="retake-button" type="button">Take quiz again</button>
+            <button class="primary-button" id="copy-canvas-btn" type="button">Copy submission for Canvas</button>
+            <button class="secondary-button" id="download-txt-btn" type="button">Download as text</button>
           </div>
+        </section>
+
+        <section class="retake-section">
+          <button class="ghost-button" id="retake-btn" type="button">Take quiz again</button>
         </section>
       </div>
     </section>
   `;
 
-  rootElement.querySelector("#post-plan").addEventListener("input", (event) => {
-    state.reflections["post-plan"] = event.target.value;
+  rootEl.querySelector("#post-plan").addEventListener("input", (e) => {
+    state.reflections["post-plan"] = e.target.value;
+    autoSave();
   });
 
-  rootElement.querySelector("#copy-canvas-button").addEventListener("click", async () => {
-    const currentData = {
-      ...currentAttemptData,
-      reflections: { ...state.reflections },
-    };
+  rootEl.querySelector("#copy-canvas-btn").addEventListener("click", async () => {
+    const btn = rootEl.querySelector("#copy-canvas-btn");
+    const currentData = { ...currentAttemptData, reflections: { ...state.reflections } };
     const allData = [...state.attempts, currentData];
-    const canvasText = buildCanvasSubmission(state.quiz, allData);
-    saveCanvasTextToStorage(canvasText);
+    const text = buildCanvasSubmission(state.quiz, allData);
+    saveCanvasText(text);
 
     try {
-      await navigator.clipboard.writeText(canvasText);
-      setStatus("Copied! Paste this into your Canvas assignment submission.", "success");
+      await navigator.clipboard.writeText(text);
+      btn.textContent = "Copied!";
+      btn.classList.add("is-copied");
+      showToast("Copied! Paste this into your Canvas assignment.", "success");
+      setTimeout(() => {
+        btn.textContent = "Copy submission for Canvas";
+        btn.classList.remove("is-copied");
+      }, 3000);
     } catch {
-      setStatus("Clipboard copy failed. Use the download button instead.", "error");
+      showToast("Clipboard copy failed. Use the download button instead.", "error");
     }
   });
 
-  rootElement.querySelector("#download-text-button").addEventListener("click", () => {
-    const currentData = {
-      ...currentAttemptData,
-      reflections: { ...state.reflections },
-    };
+  rootEl.querySelector("#download-txt-btn").addEventListener("click", () => {
+    const currentData = { ...currentAttemptData, reflections: { ...state.reflections } };
     const allData = [...state.attempts, currentData];
-    const canvasText = buildCanvasSubmission(state.quiz, allData);
-    saveCanvasTextToStorage(canvasText);
-    createDownload(`${state.quiz.id}-submission.txt`, `${canvasText}\n`, "text/plain;charset=utf-8");
-    setStatus("Submission downloaded.", "success");
+    const text = buildCanvasSubmission(state.quiz, allData);
+    saveCanvasText(text);
+    createDownload(`${state.quiz.id}-submission.txt`, `${text}\n`, "text/plain;charset=utf-8");
+    showToast("Submission downloaded.", "success");
   });
 
-  rootElement.querySelector("#retake-button").addEventListener("click", () => {
+  rootEl.querySelector("#retake-btn").addEventListener("click", () => {
+    if (!confirm("Start a new attempt? Your current results are saved.")) return;
+
     const attemptRecord = {
       attemptNumber: state.attempts.length + 1,
       reflections: { ...state.reflections },
@@ -784,15 +841,17 @@ function renderResults() {
     state.hintUsage = {};
     state.questionTimestamps = {};
     state.quizStartedAt = null;
-
+    autoSave();
     render();
-    setStatus("Starting a new attempt. Your previous results are saved.", "success");
+    showToast("Starting a new attempt. Your previous results are saved.", "success");
   });
 }
 
+// ─── Rendering: Empty / Error ────────────────────────────────────────────────
+
 function renderEmptyState(title, description) {
   renderHero();
-  rootElement.innerHTML = `
+  rootEl.innerHTML = `
     <section class="empty-state">
       <p class="eyebrow">Quiz unavailable</p>
       <h2>${escapeHtml(title)}</h2>
@@ -801,74 +860,87 @@ function renderEmptyState(title, description) {
   `;
 }
 
+// ─── Rendering: Orchestrator ─────────────────────────────────────────────────
+
 function render() {
   renderHero();
-  renderSidebar();
 
-  if (!state.quiz) {
-    renderEmptyState("No quiz loaded", "Choose a quiz from the menu to begin.");
+  // Lock picker during active quiz phases
+  if (state.phase === "intro" || state.phase === "quiz" || state.phase === "outro") {
+    lockPicker();
+  } else {
+    unlockPicker();
+  }
+
+  if (!state.quiz || state.phase === "select") {
+    renderSidebar();
+    renderSelect();
     return;
   }
 
   if (state.phase === "intro") {
+    renderSidebar();
     renderIntro();
     return;
   }
 
   if (state.phase === "outro") {
+    renderSidebar();
     renderOutro();
     return;
   }
 
   if (state.phase === "results") {
-    renderResults();
     renderSidebar();
+    renderResults();
     return;
   }
 
+  // Quiz phase
+  renderSidebar();
   renderQuestion();
 }
 
-function submitQuiz() {
-  const unansweredQuestion = state.quiz.questions.find((question) => !state.answers[question.id]);
+// ─── Quiz Logic ──────────────────────────────────────────────────────────────
 
-  if (unansweredQuestion) {
-    state.currentQuestionIndex = state.quiz.questions.findIndex(
-      (question) => question.id === unansweredQuestion.id
-    );
-    render();
-    setStatus("Please answer every question before submitting.", "error");
+function submitQuiz() {
+  if (!getAllAnswered()) {
+    showToast("Please answer every question before submitting.", "error");
     return;
   }
+
+  if (!confirm("Submit your quiz? You won't be able to change your answers after this.")) return;
 
   recordQuestionLeave();
   state.submittedAt = new Date();
   state.grade = gradeQuiz(state.quiz, state.answers);
   state.phase = "outro";
+  autoSave();
   render();
-  setStatus("");
 }
+
+// ─── Load Catalog ────────────────────────────────────────────────────────────
 
 async function loadCatalog() {
   const response = await fetch("quizzes/catalog.json");
-
-  if (!response.ok) {
-    throw new Error("Unable to load the quiz list.");
-  }
+  if (!response.ok) throw new Error("Unable to load the quiz list.");
 
   state.catalog = await response.json();
 
   if (quizPicker) {
-    quizPicker.innerHTML = state.catalog
-      .map(
-        (pack) => `<option value="${escapeHtml(pack.path)}">${escapeHtml(pack.title)}</option>`
-      )
-      .join("");
+    const placeholder = `<option value="">— Select a quiz —</option>`;
+    const quizOptions = state.catalog.map((p) =>
+      `<option value="${escapeHtml(p.path)}">${escapeHtml(p.title)}</option>`
+    ).join("");
+    quizPicker.innerHTML = placeholder + quizOptions;
+    quizPicker.value = "";
   }
 }
 
+// ─── Load Quiz ───────────────────────────────────────────────────────────────
+
 async function loadQuiz(path) {
-  setStatus(`Loading ${getPackLabel(path)}...`);
+  showToast("Loading quiz...", "info");
   state.quiz = null;
   state.answers = {};
   state.currentQuestionIndex = 0;
@@ -879,62 +951,96 @@ async function loadQuiz(path) {
   state.hintUsage = {};
   state.questionTimestamps = {};
   state.quizStartedAt = null;
-  render();
 
   const response = await fetch(path);
-
-  if (!response.ok) {
-    throw new Error("Unable to load that quiz.");
-  }
+  if (!response.ok) throw new Error("Unable to load that quiz.");
 
   const rawQuiz = await response.json();
-  const validationErrors = validateQuizPack(rawQuiz);
-
-  if (validationErrors.length > 0) {
-    throw new Error(validationErrors.join(" "));
-  }
+  const errors = validateQuizPack(rawQuiz);
+  if (errors.length > 0) throw new Error(errors.join(" "));
 
   const baseUrl = new URL(path, window.location.href).toString();
   state.quiz = normalizeQuizPack(rawQuiz, { baseUrl });
   state.selectedPackPath = path;
   state.attempts = loadAttemptsFromStorage(state.quiz.id);
 
-  if (quizPicker) {
-    quizPicker.value = path;
+  // Restore saved progress
+  const saved = loadSave(state.quiz.id);
+  if (saved && saved.answers && Object.keys(saved.answers).length > 0) {
+    state.answers = saved.answers || {};
+    state.reflections = saved.reflections || {};
+    state.hintUsage = saved.hintUsage || {};
+    state.questionTimestamps = saved.questionTimestamps || {};
+    state.currentQuestionIndex = saved.currentQuestionIndex || 0;
+    state.quizStartedAt = saved.quizStartedAt ? new Date(saved.quizStartedAt) : null;
+
+    if (saved.grade) {
+      state.grade = saved.grade;
+      state.submittedAt = saved.submittedAt ? new Date(saved.submittedAt) : new Date();
+    }
+
+    state.phase = saved.phase || "intro";
+    showToast("Progress restored — picking up where you left off.", "success");
+  } else {
+    showToast(`${state.quiz.title} is ready.`, "success");
   }
+
+  if (quizPicker) quizPicker.value = path;
   window.localStorage.setItem("quiz-pack-path", path);
   updateQueryString(path);
-  setStatus(`${state.quiz.title} is ready. Answer the reflection questions to begin.`, "success");
   render();
 }
 
-function bindGlobalControls() {
-  if (!quizPicker) return;
-  quizPicker.addEventListener("change", async (event) => {
-    const nextPath = event.target.value;
+// ─── Global Controls ─────────────────────────────────────────────────────────
 
-    try {
-      await loadQuiz(nextPath);
-    } catch (error) {
-      setStatus(error.message, "error");
-      renderEmptyState("Could not load quiz", error.message);
-    }
-  });
+function bindGlobalControls() {
+  if (quizPicker) {
+    quizPicker.addEventListener("change", () => {
+      if (loadQuizBtn) loadQuizBtn.disabled = !quizPicker.value;
+    });
+  }
+
+  if (loadQuizBtn) {
+    loadQuizBtn.addEventListener("click", async () => {
+      if (!quizPicker?.value) return;
+
+      // If mid-quiz, confirm before switching
+      if (state.quiz && state.phase !== "select" && state.phase !== "results") {
+        if (!confirm("Leave the current quiz? Your progress is saved.")) return;
+      }
+
+      try {
+        await loadQuiz(quizPicker.value);
+      } catch (error) {
+        showToast(error.message, "error");
+        renderEmptyState("Could not load quiz", error.message);
+      }
+    });
+  }
 }
+
+// ─── Init ────────────────────────────────────────────────────────────────────
 
 async function init() {
   bindGlobalControls();
 
   try {
     await loadCatalog();
-    const requestedPack =
-      new URL(window.location.href).searchParams.get("quiz") ??
-      window.localStorage.getItem("quiz-pack-path") ??
-      defaultPackPath;
 
-    await loadQuiz(requestedPack);
+    // Check for a quiz in the URL query string
+    const urlQuiz = new URL(window.location.href).searchParams.get("quiz");
+    if (urlQuiz) {
+      // Pre-select in picker
+      if (quizPicker) quizPicker.value = urlQuiz;
+      if (loadQuizBtn) loadQuizBtn.disabled = false;
+      await loadQuiz(urlQuiz);
+    } else {
+      // Show quiz selection screen
+      state.phase = "select";
+      render();
+    }
   } catch (error) {
-    setStatus(error.message, "error");
+    showToast(error.message, "error");
     renderEmptyState("Quiz failed to initialize", error.message);
   }
 }

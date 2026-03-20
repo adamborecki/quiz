@@ -1,5 +1,11 @@
 [
   {
+    "id": "mus347-spring-break",
+    "title": "MUS 347 Spring Break Quiz",
+    "description": "EQ, dynamics processors, stereo imaging, vowel frequencies, and audio identification.",
+    "path": "quizzes/mus347-spring-break.json"
+  },
+  {
     "id": "mus347-quiz2",
     "title": "MUS 347 Quiz 2",
     "description": "Music technology quiz with audio examples, EQ, dynamics, and stereo imaging prompts.",
