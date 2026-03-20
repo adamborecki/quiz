@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300">
+  <rect width="600" height="300" fill="#F5EDE3" rx="8"/>
+  <text x="300" y="28" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2D2D2D">Threshold: How Processors Decide to Act</text>
+
+  <!-- Waveform area -->
+  <rect x="40" y="45" width="530" height="200" fill="white" fill-opacity="0.5" rx="6" stroke="#E8D5C0" stroke-width="1"/>
+  <!-- Center line -->
+  <line x1="50" y1="150" x2="560" y2="150" stroke="#E8D5C0" stroke-width="0.5"/>
+
+  <!-- Threshold line (upper) -->
+  <line x1="50" y1="100" x2="560" y2="100" stroke="#5C3D2E" stroke-width="2" stroke-dasharray="8,4"/>
+  <rect x="465" y="86" width="90" height="18" fill="#F5EDE3" fill-opacity="0.9" rx="3"/>
+  <text x="510" y="99" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#5C3D2E" font-weight="bold">Threshold</text>
+  <!-- Threshold line (lower mirror) -->
+  <line x1="50" y1="200" x2="560" y2="200" stroke="#5C3D2E" stroke-width="2" stroke-dasharray="8,4"/>
+
+  <!-- Above threshold shading -->
+  <rect x="50" y="48" width="510" height="52" fill="#C0392B" fill-opacity="0.04"/>
+  <rect x="50" y="200" width="510" height="42" fill="#C0392B" fill-opacity="0.04"/>
+
+  <!-- Below threshold shading -->
+  <rect x="50" y="100" width="510" height="100" fill="#3D8B37" fill-opacity="0.04"/>
+
+  <!-- Waveform -->
+  <!-- Quiet section (below threshold) - green -->
+  <path d="M 60,150 C 65,148 70,140 75,135 C 80,130 85,155 90,160 C 95,165 100,150 105,142 C 110,135 115,155 120,160 C 125,165 130,145 135,138" fill="none" stroke="#3D8B37" stroke-width="2"/>
+  <!-- Loud section (above threshold) - red-ish -->
+  <path d="M 135,138 C 145,120 155,85 165,68 C 175,85 180,215 190,232 C 200,215 205,78 215,62 C 225,78 230,218 240,235 C 250,218 255,90 260,80 C 265,90 270,195 275,205" fill="none" stroke="#C0392B" stroke-width="2.5"/>
+  <!-- Quiet section - green -->
+  <path d="M 275,205 C 278,195 282,160 285,155 C 290,145 295,155 300,160 C 305,165 310,148 315,142 C 320,136 325,150 330,155 C 335,160 340,145 345,140 C 350,135 355,148 360,152" fill="none" stroke="#3D8B37" stroke-width="2"/>
+  <!-- Loud section -->
+  <path d="M 360,152 C 365,140 375,95 385,72 C 395,95 400,210 410,228 C 420,210 425,82 435,65 C 445,82 450,210 455,225 C 460,210 465,100 470,90 C 475,100 478,165 480,155" fill="none" stroke="#C0392B" stroke-width="2.5"/>
+  <!-- Quiet section - green -->
+  <path d="M 480,155 C 485,148 490,140 495,135 C 500,130 505,155 510,162 C 515,168 520,148 525,142 C 530,138 535,152 540,150 C 545,148 550,150 555,150" fill="none" stroke="#3D8B37" stroke-width="2"/>
+
+  <!-- Labels -->
+  <rect x="60" y="54" width="215" height="18" fill="#C0392B" fill-opacity="0.12" rx="3"/>
+  <text x="167" y="66" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#C0392B" font-weight="bold">Above threshold — processor acts</text>
+
+  <rect x="60" y="255" width="225" height="18" fill="#3D8B37" fill-opacity="0.12" rx="3"/>
+  <text x="172" y="267" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#3D8B37" font-weight="bold">Below threshold — no processing</text>
+
+  <!-- Legend -->
+  <rect x="350" y="255" width="200" height="35" fill="white" fill-opacity="0.8" rx="4" stroke="#E8D5C0" stroke-width="1"/>
+  <line x1="362" y1="270" x2="382" y2="270" stroke="#C0392B" stroke-width="2.5"/>
+  <text x="388" y="274" font-family="system-ui, sans-serif" font-size="10" fill="#C0392B">Exceeds threshold</text>
+  <line x1="362" y1="283" x2="382" y2="283" stroke="#3D8B37" stroke-width="2"/>
+  <text x="388" y="287" font-family="system-ui, sans-serif" font-size="10" fill="#3D8B37">Below threshold</text>
+</svg>

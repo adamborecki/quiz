@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300">
+  <rect width="600" height="300" fill="#F5EDE3" rx="8"/>
+  <text x="300" y="28" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2D2D2D">High Shelf Filter (Boost)</text>
+  <!-- Grid area -->
+  <rect x="80" y="40" width="490" height="220" fill="white" fill-opacity="0.5" rx="4" stroke="#E8D5C0" stroke-width="1"/>
+  <!-- 0dB reference (dotted) -->
+  <line x1="80" y1="180" x2="570" y2="180" stroke="#5C3D2E" stroke-width="1.2" stroke-dasharray="4,4"/>
+  <text x="72" y="184" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="#5C3D2E">0 dB</text>
+  <!-- +6dB line -->
+  <line x1="80" y1="110" x2="570" y2="110" stroke="#E8D5C0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <text x="72" y="114" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D">+6 dB</text>
+  <!-- +12dB line -->
+  <line x1="80" y1="60" x2="570" y2="60" stroke="#E8D5C0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <text x="72" y="64" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D">+12</text>
+  <!-- -6dB line -->
+  <line x1="80" y1="235" x2="570" y2="235" stroke="#E8D5C0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <text x="72" y="239" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D">-6</text>
+  <!-- Axes -->
+  <text x="30" y="155" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#5C3D2E" transform="rotate(-90,30,155)">dB</text>
+  <text x="325" y="290" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#5C3D2E">Frequency (Hz)</text>
+  <!-- Frequency labels -->
+  <text x="110" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D">100</text>
+  <text x="210" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D">500</text>
+  <text x="310" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D">1k</text>
+  <text x="380" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D">4k</text>
+  <text x="500" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D">10k</text>
+  <text x="560" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D">20k</text>
+  <!-- Shelf curve -->
+  <path d="M 80,180 L 280,180 C 310,180 330,175 350,165 C 370,150 385,125 395,115 C 405,110 410,110 420,110 L 570,110" fill="none" stroke="#5C3D2E" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Fill under shelf above 0dB -->
+  <path d="M 280,180 C 310,180 330,175 350,165 C 370,150 385,125 395,115 C 405,110 410,110 420,110 L 570,110 L 570,180 L 280,180 Z" fill="#3D8B37" fill-opacity="0.1"/>
+  <!-- Transition frequency marker -->
+  <line x1="380" y1="45" x2="380" y2="260" stroke="#5C3D2E" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="380" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#5C3D2E" font-weight="bold">4 kHz</text>
+  <!-- Annotation: 0dB baseline -->
+  <rect x="100" y="186" width="85" height="18" fill="#F5EDE3" fill-opacity="0.9" rx="3"/>
+  <text x="142" y="199" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#5C3D2E" font-weight="bold">0 dB baseline</text>
+  <!-- Annotation: Shelf -->
+  <line x1="490" y1="110" x2="490" y2="85" stroke="#3D8B37" stroke-width="1.2"/>
+  <polygon points="487,88 490,80 493,88" fill="#3D8B37"/>
+  <rect x="440" y="63" width="105" height="18" fill="#F5EDE3" fill-opacity="0.9" rx="3"/>
+  <text x="492" y="76" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#3D8B37" font-weight="bold">Stays at this level</text>
+  <!-- Annotation: Transition -->
+  <path d="M 345,145 C 330,135 325,128 325,120" fill="none" stroke="#5C3D2E" stroke-width="1"/>
+  <text x="310" y="115" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#5C3D2E">Transition</text>
+  <!-- Shelf bracket -->
+  <line x1="420" y1="107" x2="560" y2="107" stroke="#3D8B37" stroke-width="1.5"/>
+  <text x="490" y="100" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#3D8B37" font-style="italic">"Shelf" — flat boost</text>
+</svg>

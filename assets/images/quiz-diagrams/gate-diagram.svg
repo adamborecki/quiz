@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <rect width="600" height="400" fill="#F5EDE3" rx="8"/>
+  <text x="300" y="28" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2D2D2D">Noise Gate Diagram</text>
+
+  <!-- Input waveform area -->
+  <rect x="30" y="45" width="540" height="150" fill="white" fill-opacity="0.5" rx="6" stroke="#E8D5C0" stroke-width="1"/>
+  <text x="55" y="62" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#5C3D2E">Input Signal</text>
+  <!-- Center line -->
+  <line x1="40" y1="125" x2="560" y2="125" stroke="#E8D5C0" stroke-width="0.5"/>
+
+  <!-- Threshold line on input -->
+  <line x1="40" y1="90" x2="560" y2="90" stroke="#C0392B" stroke-width="1.5" stroke-dasharray="8,4"/>
+  <line x1="40" y1="160" x2="560" y2="160" stroke="#C0392B" stroke-width="1.5" stroke-dasharray="8,4"/>
+  <text x="565" y="93" font-family="system-ui, sans-serif" font-size="9" fill="#C0392B" font-weight="bold">Threshold</text>
+  <text x="565" y="163" font-family="system-ui, sans-serif" font-size="9" fill="#C0392B" font-weight="bold">Threshold</text>
+
+  <!-- Input waveform -->
+  <!-- Quiet part 1 (below threshold) -->
+  <path d="M 50,125 C 55,122 60,118 65,115 C 70,118 75,132 80,135 C 85,132 90,117 95,115 C 100,117 105,133 110,135 C 115,133 120,120 125,118" fill="none" stroke="#5C3D2E" stroke-width="1.8" opacity="0.4"/>
+  <!-- Loud part 1 (above threshold) -->
+  <path d="M 125,118 C 135,105 140,75 150,55 C 160,75 165,170 175,185 C 185,170 190,65 200,50 C 210,65 215,180 225,190 C 235,180 240,70 250,60 C 260,70 265,165 270,175 C 275,165 280,100 285,110" fill="none" stroke="#3D8B37" stroke-width="2"/>
+  <!-- Quiet part 2 (below threshold) -->
+  <path d="M 285,110 C 290,118 295,130 300,133 C 305,130 310,118 315,115 C 320,118 325,130 330,132 C 335,130 340,120 345,118 C 350,120 355,128 360,130 C 365,128 370,120 375,118" fill="none" stroke="#5C3D2E" stroke-width="1.8" opacity="0.4"/>
+  <!-- Loud part 2 (above threshold) -->
+  <path d="M 375,118 C 380,108 390,80 400,60 C 410,80 415,175 425,185 C 435,175 440,70 450,55 C 460,70 465,170 470,180 C 475,170 480,85 485,75 C 490,85 495,155 500,160 C 505,150 508,110 510,115" fill="none" stroke="#3D8B37" stroke-width="2"/>
+  <!-- Quiet part 3 -->
+  <path d="M 510,115 C 515,120 520,130 525,132 C 530,130 535,120 540,118 C 545,120 550,128 555,125" fill="none" stroke="#5C3D2E" stroke-width="1.8" opacity="0.4"/>
+
+  <!-- Arrow -->
+  <line x1="300" y1="200" x2="300" y2="230" stroke="#5C3D2E" stroke-width="2"/>
+  <polygon points="296,227 300,236 304,227" fill="#5C3D2E"/>
+  <text x="330" y="222" font-family="system-ui, sans-serif" font-size="11" fill="#5C3D2E" font-weight="bold">Gate applied</text>
+
+  <!-- Output waveform area -->
+  <rect x="30" y="240" width="540" height="150" fill="white" fill-opacity="0.5" rx="6" stroke="#E8D5C0" stroke-width="1"/>
+  <text x="55" y="257" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#3D8B37">Output Signal (Gate Applied)</text>
+  <!-- Center line -->
+  <line x1="40" y1="320" x2="560" y2="320" stroke="#E8D5C0" stroke-width="0.5"/>
+
+  <!-- Gated output: quiet parts muted -->
+  <!-- Muted region 1 -->
+  <rect x="40" y="310" width="90" height="20" fill="#C0392B" fill-opacity="0.06" rx="2"/>
+  <line x1="50" y1="320" x2="125" y2="320" stroke="#C0392B" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+  <!-- Loud part 1 passes -->
+  <path d="M 125,320 C 135,305 140,275 150,255 C 160,275 165,365 175,380 C 185,365 190,265 200,250 C 210,265 215,375 225,385 C 235,375 240,270 250,260 C 260,270 265,360 270,370 C 275,360 280,300 285,310" fill="none" stroke="#3D8B37" stroke-width="2"/>
+  <!-- Muted region 2 -->
+  <rect x="280" y="310" width="100" height="20" fill="#C0392B" fill-opacity="0.06" rx="2"/>
+  <line x1="285" y1="320" x2="375" y2="320" stroke="#C0392B" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+  <!-- Loud part 2 passes -->
+  <path d="M 375,320 C 380,310 390,280 400,260 C 410,280 415,370 425,380 C 435,370 440,270 450,255 C 460,270 465,365 470,375 C 475,365 480,285 485,275 C 490,285 495,350 500,355 C 505,345 508,310 510,315" fill="none" stroke="#3D8B37" stroke-width="2"/>
+  <!-- Muted region 3 -->
+  <rect x="505" y="310" width="55" height="20" fill="#C0392B" fill-opacity="0.06" rx="2"/>
+  <line x1="510" y1="320" x2="555" y2="320" stroke="#C0392B" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+
+  <!-- Legend -->
+  <rect x="180" y="358" width="250" height="28" fill="#F5EDE3" fill-opacity="0.95" rx="4" stroke="#E8D5C0" stroke-width="1"/>
+  <line x1="195" y1="372" x2="215" y2="372" stroke="#3D8B37" stroke-width="2.5"/>
+  <text x="220" y="376" font-family="system-ui, sans-serif" font-size="10" fill="#3D8B37">Signal passes</text>
+  <line x1="320" y1="372" x2="340" y2="372" stroke="#C0392B" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="345" y="376" font-family="system-ui, sans-serif" font-size="10" fill="#C0392B">Gate closed (muted)</text>
+</svg>

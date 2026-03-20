@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300">
+  <defs>
+    <linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5C3D2E" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#5C3D2E" stop-opacity="0.02"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="600" height="300" fill="#F5EDE3" rx="8"/>
+  <!-- Title -->
+  <text x="300" y="28" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2D2D2D">EQ Frequency Response</text>
+  <!-- Grid area -->
+  <rect x="80" y="40" width="490" height="220" fill="white" fill-opacity="0.5" rx="4" stroke="#E8D5C0" stroke-width="1"/>
+  <!-- Horizontal grid lines (dB) -->
+  <line x1="80" y1="62" x2="570" y2="62" stroke="#E8D5C0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <line x1="80" y1="106" x2="570" y2="106" stroke="#E8D5C0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <line x1="80" y1="150" x2="570" y2="150" stroke="#5C3D2E" stroke-width="0.8" stroke-dasharray="6,3"/>
+  <line x1="80" y1="194" x2="570" y2="194" stroke="#E8D5C0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <line x1="80" y1="238" x2="570" y2="238" stroke="#E8D5C0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <!-- Vertical grid lines (frequency) -->
+  <line x1="178" y1="40" x2="178" y2="260" stroke="#E8D5C0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <line x1="342" y1="40" x2="342" y2="260" stroke="#E8D5C0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <line x1="506" y1="40" x2="506" y2="260" stroke="#E8D5C0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <!-- Y-axis labels -->
+  <text x="72" y="66" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D">+12</text>
+  <text x="72" y="110" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D">+6</text>
+  <text x="72" y="154" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D">0</text>
+  <text x="72" y="198" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D">-6</text>
+  <text x="72" y="242" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D">-12</text>
+  <text x="30" y="155" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#5C3D2E" transform="rotate(-90, 30, 155)">dB</text>
+  <!-- X-axis labels -->
+  <text x="80" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D">20</text>
+  <text x="178" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D">100</text>
+  <text x="342" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D">1k</text>
+  <text x="506" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D">10k</text>
+  <text x="570" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D">20k</text>
+  <text x="325" y="295" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#5C3D2E">Frequency (Hz)</text>
+  <!-- EQ Curve: cut at ~300Hz, boost at ~3kHz -->
+  <path d="M 80,150 C 120,150 160,150 210,185 C 240,200 260,195 280,175 C 300,160 320,150 350,150 C 380,150 400,140 430,115 C 450,102 465,100 480,105 C 500,115 520,135 540,145 C 555,148 565,150 570,150" fill="none" stroke="#5C3D2E" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Fill under curve -->
+  <path d="M 80,150 C 120,150 160,150 210,185 C 240,200 260,195 280,175 C 300,160 320,150 350,150 C 380,150 400,140 430,115 C 450,102 465,100 480,105 C 500,115 520,135 540,145 C 555,148 565,150 570,150 L 570,260 L 80,260 Z" fill="url(#eqGrad)"/>
+  <!-- Annotation: 300Hz cut -->
+  <circle cx="220" cy="188" r="3" fill="#C0392B"/>
+  <line x1="220" y1="188" x2="220" y2="215" stroke="#C0392B" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="220" y="228" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#C0392B">300Hz cut</text>
+  <!-- Annotation: 3kHz boost -->
+  <circle cx="455" cy="100" r="3" fill="#3D8B37"/>
+  <line x1="455" y1="100" x2="455" y2="75" stroke="#3D8B37" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="455" y="68" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#3D8B37">3kHz boost</text>
+</svg>

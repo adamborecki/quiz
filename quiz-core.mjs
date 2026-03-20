@@ -17,6 +17,7 @@ function cloneMedia(media, baseUrl = null) {
     src: media.src,
     title: media.title ?? "",
     caption: media.caption ?? "",
+    alt: media.alt ?? "",
   };
 
   if (baseUrl) {
@@ -167,8 +168,9 @@ export function validateQuizPack(quiz) {
             return;
           }
 
-          if (media.type !== "audio") {
-            errors.push(`${label} media item ${mediaIndex + 1} must use type \`audio\`.`);
+          const ALLOWED_MEDIA_TYPES = new Set(["audio", "image"]);
+          if (!ALLOWED_MEDIA_TYPES.has(media.type)) {
+            errors.push(`${label} media item ${mediaIndex + 1} must use type \`audio\` or \`image\`.`);
           }
 
           if (typeof media.src !== "string" || !media.src.trim()) {
@@ -407,6 +409,9 @@ export function buildCanvasSubmission(quiz, attempts) {
       const ts = attempt.questionTimestamps?.[question.id];
       const timeSpent = ts && ts.end && ts.start ? ts.end - ts.start : null;
       const usedHint = attempt.hintUsage?.[question.id] ?? false;
+      const usedFiftyFifty = !!attempt.fiftyFiftyUsage?.[question.id];
+      const confLevel = attempt.confidence?.[question.id] ?? 0;
+      const confLabels = ["", "Guessing", "Not sure", "Somewhat sure", "Confident", "Very confident"];
 
       if (isCorrect) {
         lines.push(`  ${index + 1}. [${status}] ${question.prompt} → ${getChoiceLabel(question, selectedAnswer)}`);
@@ -416,7 +421,9 @@ export function buildCanvasSubmission(quiz, attempts) {
       }
       const details = [];
       if (timeSpent) details.push(`Time: ${formatDurationForExport(timeSpent)}`);
-      details.push(`Hint used: ${usedHint ? "Yes" : "No"}`);
+      if (confLevel) details.push(`Confidence: ${confLabels[confLevel]}`);
+      details.push(`Hint: ${usedHint ? "Yes" : "No"}`);
+      if (usedFiftyFifty) details.push(`50:50: Yes`);
       lines.push(`     ${details.join(" | ")}`);
     });
     lines.push("");

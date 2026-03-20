@@ -10,8 +10,8 @@
     "shuffleQuestions": false,
     "shuffleChoices": false,
     "showResultsAtEnd": true,
-    "enableHints": false,
-    "enableFiftyFifty": false
+    "enableHints": true,
+    "enableFiftyFifty": true
   },
   "questions": [
     {
@@ -25,7 +25,8 @@
         { "id": "d", "label": "2k Hz (a)" },
         { "id": "e", "label": "4k Hz (ee)" }
       ],
-      "correctAnswer": "c",
+      "correctAnswer": "e",
+      "hint": "Listen for a very high-pitched, bright boost — like a sizzle at the top. Try saying 'ee' and notice how high it feels.",
       "categories": ["Audio / Listening"],
       "media": [
         {
@@ -48,6 +49,7 @@
         { "id": "e", "label": "4k Hz (ee)" }
       ],
       "correctAnswer": "a",
+      "hint": "Listen for a deep, low rumble — almost like a subwoofer test. Try making an 'oo' sound and feel how low it sits in your chest.",
       "categories": ["Audio / Listening"],
       "media": [
         {
@@ -69,6 +71,7 @@
         { "id": "d", "label": "High-pass filter (low cut)" }
       ],
       "correctAnswer": "d",
+      "hint": "Listen for what's being removed. Are the lows disappearing (leaving only highs), or the highs? The name tells you what passes through.",
       "categories": ["Audio / Listening"],
       "media": [
         {
@@ -84,12 +87,13 @@
       "type": "audio_multiple_choice",
       "prompt": "Listen to Audio Example 4. What type of processing is being applied?",
       "choices": [
-        { "id": "a", "label": "Parametric EQ cut" },
-        { "id": "b", "label": "High shelf boost" },
-        { "id": "c", "label": "Low shelf cut" },
-        { "id": "d", "label": "Bandpass filter" }
+        { "id": "a", "label": "Gate" },
+        { "id": "b", "label": "Compressor" },
+        { "id": "c", "label": "Parametric EQ cut" },
+        { "id": "d", "label": "Reverb" }
       ],
       "correctAnswer": "a",
+      "hint": "Listen to the dynamics — does the sound cut in and out abruptly, almost like someone is flipping a switch? That's a clue about which processor is at work.",
       "categories": ["Audio / Listening"],
       "media": [
         {
@@ -105,12 +109,13 @@
       "type": "audio_multiple_choice",
       "prompt": "Listen to Audio Example 5. What dynamics processor is being used?",
       "choices": [
-        { "id": "a", "label": "Limiter" },
+        { "id": "a", "label": "Expander" },
         { "id": "b", "label": "Compressor" },
         { "id": "c", "label": "Gate" },
         { "id": "d", "label": "No processing" }
       ],
-      "correctAnswer": "c",
+      "correctAnswer": "b",
+      "hint": "Notice how the quiet parts — room ambience, reverb tails — seem to get louder relative to the main signal. What processor brings up quiet sounds by reducing loud ones?",
       "categories": ["Audio / Listening"],
       "media": [
         {
@@ -132,8 +137,17 @@
         { "id": "d", "label": "Dynamic range" }
       ],
       "correctAnswer": "b",
+      "hint": "Think about what changes when you turn the bass or treble knob on a speaker. It's not about volume or timing.",
       "categories": ["EQ & Filters"],
-      "explanation": "EQ (equalization) shapes the frequency content of a signal, which we perceive as changes in tone color or timbre."
+      "explanation": "EQ (equalization) shapes the frequency content of a signal, which we perceive as changes in tone color or timbre.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/eq-frequency-response.svg",
+          "title": "EQ Frequency Response",
+          "alt": "shows how EQ shapes frequency content"
+        }
+      ]
     },
     {
       "id": "q07-low-cut-name",
@@ -146,8 +160,17 @@
         { "id": "d", "label": "Low shelf" }
       ],
       "correctAnswer": "b",
+      "hint": "If you're 'cutting the lows,' then the lows are being removed. What kind of frequencies get to 'pass' through the filter?",
       "categories": ["EQ & Filters"],
-      "explanation": "A low cut removes low frequencies, meaning it lets high frequencies pass through — hence \"high-pass filter.\""
+      "explanation": "A low cut removes low frequencies, meaning it lets high frequencies pass through — hence \"high-pass filter.\"",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/highpass-lowpass-filters.svg",
+          "title": "High-Pass vs Low-Pass Filters",
+          "alt": "shows which frequencies pass through"
+        }
+      ]
     },
     {
       "id": "q08-filter-slope",
@@ -160,8 +183,17 @@
         { "id": "d", "label": "The Q factor" }
       ],
       "correctAnswer": "b",
+      "hint": "Think of it as the steepness of a cliff vs. a gentle hill. Both go down, but one drops off much faster. What does that steepness describe?",
       "categories": ["EQ & Filters"],
-      "explanation": "Slope describes how aggressively frequencies are reduced beyond the cutoff point. A steeper slope (e.g., 24 dB/oct) removes frequencies more sharply than a gentle one (e.g., 6 dB/oct)."
+      "explanation": "Slope describes how aggressively frequencies are reduced beyond the cutoff point. A steeper slope (e.g., 24 dB/oct) removes frequencies more sharply than a gentle one (e.g., 6 dB/oct).",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/filter-slope-comparison.svg",
+          "title": "Filter Slope Comparison",
+          "alt": "shows gentle vs steep slopes"
+        }
+      ]
     },
     {
       "id": "q09-shelf-curve",
@@ -174,8 +206,17 @@
         { "id": "d", "label": "Inverts polarity" }
       ],
       "correctAnswer": "b",
+      "hint": "Picture an actual shelf on a wall — once it reaches its height, it stays flat. How does a shelf filter behave past its set point?",
       "categories": ["EQ & Filters"],
-      "explanation": "A shelf filter boosts or cuts all frequencies above (or below) a set point and then stays at that level — like a shelf on a bookcase."
+      "explanation": "A shelf filter boosts or cuts all frequencies above (or below) a set point and then stays at that level — like a shelf on a bookcase.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/shelf-filter-curve.svg",
+          "title": "Shelf Filter Curve",
+          "alt": "shows the shelf shape"
+        }
+      ]
     },
     {
       "id": "q10-bandpass",
@@ -188,8 +229,17 @@
         { "id": "d", "label": "High shelf" }
       ],
       "correctAnswer": "c",
+      "hint": "Imagine a window with a top edge and a bottom edge. Only what's in between gets through. Which filter works like that?",
       "categories": ["EQ & Filters"],
-      "explanation": "A bandpass filter combines a high-pass and a low-pass, letting only a middle band of frequencies through while attenuating both highs and lows."
+      "explanation": "A bandpass filter combines a high-pass and a low-pass, letting only a middle band of frequencies through while attenuating both highs and lows.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/bandpass-filter.svg",
+          "title": "Bandpass Filter",
+          "alt": "shows the frequency window"
+        }
+      ]
     },
     {
       "id": "q11-why-low-cut",
@@ -202,8 +252,17 @@
         { "id": "d", "label": "To create stereo width" }
       ],
       "correctAnswer": "b",
+      "hint": "Think about microphone handling noise, air conditioner hum, and stage vibrations. These are all low-frequency problems.",
       "categories": ["EQ & Filters"],
-      "explanation": "Most tracks contain inaudible low-end rumble, mic handling noise, or bleed that eats up headroom. A high-pass filter cleans this up without affecting the useful content of the signal."
+      "explanation": "Most tracks contain inaudible low-end rumble, mic handling noise, or bleed that eats up headroom. A high-pass filter cleans this up without affecting the useful content of the signal.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/spectrum-with-rumble.svg",
+          "title": "Spectrum with Low-Frequency Rumble",
+          "alt": "shows rumble in a mix"
+        }
+      ]
     },
     {
       "id": "q12-q-parameter",
@@ -216,8 +275,17 @@
         { "id": "d", "label": "The threshold level" }
       ],
       "correctAnswer": "b",
+      "hint": "Q stands for 'quality factor.' A high Q is like a laser pointer (narrow beam); a low Q is like a flashlight (wide spread).",
       "categories": ["EQ & Filters"],
-      "explanation": "Q (quality factor) determines how wide or narrow the affected frequency band is. A high Q targets a very narrow range; a low Q affects a broad range."
+      "explanation": "Q (quality factor) determines how wide or narrow the affected frequency band is. A high Q targets a very narrow range; a low Q affects a broad range.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/q-factor-narrow-wide.svg",
+          "title": "Q Factor: Narrow vs Wide",
+          "alt": "shows narrow and wide Q"
+        }
+      ]
     },
     {
       "id": "q13-vowel-2000hz",
@@ -231,8 +299,17 @@
         { "id": "e", "label": "ee" }
       ],
       "correctAnswer": "d",
+      "hint": "Remember the vowel-frequency ladder: oo=250, o=500, ah=1k, a=2k, ee=4k. Where does 2,000 Hz fall?",
       "categories": ["Vowel Frequencies"],
-      "explanation": "The standard vowel-frequency associations are: 250 Hz = oo, 500 Hz = o, 1k Hz = ah, 2k Hz = a, 4k Hz = ee."
+      "explanation": "The standard vowel-frequency associations are: 250 Hz = oo, 500 Hz = o, 1k Hz = ah, 2k Hz = a, 4k Hz = ee.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/vowel-frequency-chart.svg",
+          "title": "Vowel Frequency Chart",
+          "alt": "the vowel-frequency ladder"
+        }
+      ]
     },
     {
       "id": "q14-nasal-boost",
@@ -245,8 +322,17 @@
         { "id": "d", "label": "4k Hz" }
       ],
       "correctAnswer": "c",
+      "hint": "Think of someone talking through their nose, or the 'telephone' sound. That nasal quality lives in a specific range.",
       "categories": ["Vowel Frequencies"],
-      "explanation": "The 800 Hz–1.2 kHz range is often associated with a \"honky\" or nasal quality. Boosting here can make vocals sound boxy or telephone-like."
+      "explanation": "The 800 Hz–1.2 kHz range is often associated with a \"honky\" or nasal quality. Boosting here can make vocals sound boxy or telephone-like.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/vowel-frequency-chart.svg",
+          "title": "Vowel Frequency Chart",
+          "alt": "the vowel-frequency ladder"
+        }
+      ]
     },
     {
       "id": "q15-chest-mud",
@@ -259,8 +345,17 @@
         { "id": "d", "label": "4k Hz" }
       ],
       "correctAnswer": "a",
+      "hint": "Think of a sound that's warm but too thick and boomy — like someone singing into a pillow. That heaviness comes from down low.",
       "categories": ["Vowel Frequencies"],
-      "explanation": "The 200–300 Hz range adds body and chest resonance. Too much boost here creates a muddy or boomy quality."
+      "explanation": "The 200–300 Hz range adds body and chest resonance. Too much boost here creates a muddy or boomy quality.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/vowel-frequency-chart.svg",
+          "title": "Vowel Frequency Chart",
+          "alt": "the vowel-frequency ladder"
+        }
+      ]
     },
     {
       "id": "q16-dynamics-respond",
@@ -273,8 +368,17 @@
         { "id": "d", "label": "Sample rate" }
       ],
       "correctAnswer": "b",
+      "hint": "EQ responds to frequency content. Dynamics processors respond to something else entirely — think about what 'dynamics' means in music.",
       "categories": ["Dynamics Processors"],
-      "explanation": "EQ works on frequency content, while dynamics processors (compressors, gates, limiters) react to how loud the signal is — its amplitude."
+      "explanation": "EQ works on frequency content, while dynamics processors (compressors, gates, limiters) react to how loud the signal is — its amplitude.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/dynamics-vs-eq.svg",
+          "title": "Dynamics vs EQ",
+          "alt": "contrasts what each responds to"
+        }
+      ]
     },
     {
       "id": "q17-compression-result",
@@ -287,8 +391,17 @@
         { "id": "d", "label": "Wider stereo image" }
       ],
       "correctAnswer": "b",
+      "hint": "If the loud parts get turned down but the quiet parts stay the same, the gap between them gets... what?",
       "categories": ["Dynamics Processors"],
-      "explanation": "A compressor reduces the gap between the loudest and softest parts of a signal, resulting in a smaller (reduced) dynamic range."
+      "explanation": "A compressor reduces the gap between the loudest and softest parts of a signal, resulting in a smaller (reduced) dynamic range.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/compression-before-after.svg",
+          "title": "Compression: Before & After",
+          "alt": "shows dynamic range reduction"
+        }
+      ]
     },
     {
       "id": "q18-background-noise",
@@ -301,8 +414,17 @@
         { "id": "d", "label": "Parametric EQ" }
       ],
       "correctAnswer": "c",
+      "hint": "You need silence in the gaps between phrases. Which processor mutes or reduces signal that falls below a certain level?",
       "categories": ["Dynamics Processors"],
-      "explanation": "A gate silences (or reduces) signal that falls below its threshold, making it ideal for cutting noise in the gaps between vocal phrases."
+      "explanation": "A gate silences (or reduces) signal that falls below its threshold, making it ideal for cutting noise in the gaps between vocal phrases.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/gate-diagram.svg",
+          "title": "Gate Behavior",
+          "alt": "shows gate silencing quiet signal"
+        }
+      ]
     },
     {
       "id": "q19-gr-meter",
@@ -315,8 +437,17 @@
         { "id": "d", "label": "The threshold is too high to measure" }
       ],
       "correctAnswer": "b",
+      "hint": "GR stands for Gain Reduction. If the meter reads zero, how much gain is being reduced?",
       "categories": ["Dynamics Processors"],
-      "explanation": "GR stands for Gain Reduction. When it reads 0 dB, no gain is being reduced — the signal is below the threshold and the compressor is not acting."
+      "explanation": "GR stands for Gain Reduction. When it reads 0 dB, no gain is being reduced — the signal is below the threshold and the compressor is not acting.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/gr-meter.svg",
+          "title": "Gain Reduction Meter",
+          "alt": "shows 0 dB GR"
+        }
+      ]
     },
     {
       "id": "q20-limiter",
@@ -329,8 +460,17 @@
         { "id": "d", "label": "Into mono" }
       ],
       "correctAnswer": "b",
+      "hint": "Think of a ceiling in a room — you can jump, but you can't go through the ceiling. What does a limiter prevent?",
       "categories": ["Dynamics Processors"],
-      "explanation": "A limiter is essentially a compressor with an extreme ratio. It sets a hard ceiling that the signal cannot exceed."
+      "explanation": "A limiter is essentially a compressor with an extreme ratio. It sets a hard ceiling that the signal cannot exceed.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/limiter-ceiling.svg",
+          "title": "Limiter Ceiling",
+          "alt": "shows signal hitting ceiling"
+        }
+      ]
     },
     {
       "id": "q21-disable-limiter",
@@ -343,8 +483,17 @@
         { "id": "d", "label": "It causes latency only" }
       ],
       "correctAnswer": "b",
+      "hint": "If everything sounds loud, punchy, and polished, how would you notice if your mix actually has balance or dynamics problems?",
       "categories": ["Dynamics Processors"],
-      "explanation": "A master limiter makes everything sound louder and more even, which can hide mix problems. Mixing without it gives you an honest picture of your dynamics and balance."
+      "explanation": "A master limiter makes everything sound louder and more even, which can hide mix problems. Mixing without it gives you an honest picture of your dynamics and balance.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/limiter-masking-problems.svg",
+          "title": "Limiter Masking Problems",
+          "alt": "shows hidden mix issues"
+        }
+      ]
     },
     {
       "id": "q22-gibson-lr",
@@ -357,8 +506,17 @@
         { "id": "d", "label": "EQ" }
       ],
       "correctAnswer": "c",
+      "hint": "Left and right placement in a stereo field — what's the basic mixing tool that positions a sound between two speakers?",
       "categories": ["Stereo & Imaging"],
-      "explanation": "Gibson's model describes three dimensions of a mix: left/right (panning), top/bottom (frequency/EQ), and front/back (volume and reverb). Panning controls the left-right placement."
+      "explanation": "Gibson's model describes three dimensions of a mix: left/right (panning), top/bottom (frequency/EQ), and front/back (volume and reverb). Panning controls the left-right placement.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/stereo-field-panning.svg",
+          "title": "Stereo Field & Panning",
+          "alt": "shows L/R placement"
+        }
+      ]
     },
     {
       "id": "q23-masking",
@@ -371,8 +529,17 @@
         { "id": "d", "label": "They have been compressed together" }
       ],
       "correctAnswer": "b",
+      "hint": "If two instruments occupy the same frequency range in the same stereo position, one will hide the other. What's that called?",
       "categories": ["Stereo & Imaging"],
-      "explanation": "Masking occurs when two sounds occupy similar frequency ranges and stereo positions, causing one to hide or obscure the other."
+      "explanation": "Masking occurs when two sounds occupy similar frequency ranges and stereo positions, causing one to hide or obscure the other.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/masking-diagram.svg",
+          "title": "Frequency Masking",
+          "alt": "shows overlapping sounds"
+        }
+      ]
     },
     {
       "id": "q24-stereo-channels",
@@ -385,8 +552,17 @@
         { "id": "d", "label": "Unlimited channels" }
       ],
       "correctAnswer": "b",
+      "hint": "Think about your headphones or earbuds — how many separate speakers do they have?",
       "categories": ["Stereo & Imaging"],
-      "explanation": "Stereo means two channels — Left and Right. This is how most music is delivered to listeners."
+      "explanation": "Stereo means two channels — Left and Right. This is how most music is delivered to listeners.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/stereo-channels.svg",
+          "title": "Stereo Channels",
+          "alt": "shows L and R channels"
+        }
+      ]
     },
     {
       "id": "q25-haas-problem",
@@ -399,8 +575,17 @@
         { "id": "d", "label": "It only works on vocals" }
       ],
       "correctAnswer": "b",
+      "hint": "The Haas effect uses a short delay between L and R. What happens when you combine a signal with its slightly delayed copy?",
       "categories": ["Stereo & Imaging"],
-      "explanation": "The Haas effect uses a very short delay between left and right channels. When these are summed to mono, the delay causes phase cancellation (comb filtering), which can hollow out the sound."
+      "explanation": "The Haas effect uses a very short delay between left and right channels. When these are summed to mono, the delay causes phase cancellation (comb filtering), which can hollow out the sound.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/comb-filtering.svg",
+          "title": "Comb Filtering",
+          "alt": "shows phase cancellation pattern"
+        }
+      ]
     },
     {
       "id": "q26a-threshold-def",
@@ -413,8 +598,17 @@
         { "id": "d", "label": "The time it takes for the processor to react" }
       ],
       "correctAnswer": "b",
+      "hint": "Think of a door that only opens when you push hard enough. Below that force, nothing happens.",
       "categories": ["Dynamics Processors"],
-      "explanation": "The threshold is the level at which a dynamics processor \"turns on.\" Signal below threshold passes unaffected; signal that crosses it is processed."
+      "explanation": "The threshold is the level at which a dynamics processor \"turns on.\" Signal below threshold passes unaffected; signal that crosses it is processed.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/threshold-diagram.svg",
+          "title": "Threshold",
+          "alt": "shows threshold on a waveform"
+        }
+      ]
     },
     {
       "id": "q26b-comp-vs-gate",
@@ -427,8 +621,17 @@
         { "id": "d", "label": "A compressor ignores threshold, but a gate uses it" }
       ],
       "correctAnswer": "c",
+      "hint": "Compressor tames what's TOO LOUD (above threshold). Gate silences what's TOO QUIET (below threshold). They work in opposite directions.",
       "categories": ["Dynamics Processors"],
-      "explanation": "A compressor acts on signal that goes ABOVE the threshold (turning loud parts down). A gate acts on signal that falls BELOW the threshold (silencing quiet parts)."
+      "explanation": "A compressor acts on signal that goes ABOVE the threshold (turning loud parts down). A gate acts on signal that falls BELOW the threshold (silencing quiet parts).",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/compressor-vs-gate.svg",
+          "title": "Compressor vs Gate",
+          "alt": "shows opposite threshold behaviors"
+        }
+      ]
     },
     {
       "id": "q27-pan-balance",
@@ -441,8 +644,17 @@
         { "id": "d", "label": "Pan sends right to left and left to right, while balance only works on mono tracks" }
       ],
       "correctAnswer": "a",
+      "hint": "One positions a single mono source; the other adjusts relative levels of an existing left/right pair. Which is which?",
       "categories": ["Stereo & Imaging"],
-      "explanation": "Pan places a mono signal at a position in the stereo field. Balance adjusts the relative loudness of the left and right channels in an already-stereo signal."
+      "explanation": "Pan places a mono signal at a position in the stereo field. Balance adjusts the relative loudness of the left and right channels in an already-stereo signal.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/pan-vs-balance.svg",
+          "title": "Pan vs Balance",
+          "alt": "shows the difference"
+        }
+      ]
     },
     {
       "id": "q28-masking-def",
@@ -455,8 +667,17 @@
         { "id": "d", "label": "A channel is muted by a gate" }
       ],
       "correctAnswer": "b",
+      "hint": "If you can't hear the guitar when the piano plays the same notes in the same range, what's happening to the guitar?",
       "categories": ["Stereo & Imaging"],
-      "explanation": "Masking happens when one sound obscures another because they overlap in frequency, timing, or stereo position. Fixing masking is a core part of mixing."
+      "explanation": "Masking happens when one sound obscures another because they overlap in frequency, timing, or stereo position. Fixing masking is a core part of mixing.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/masking-diagram.svg",
+          "title": "Frequency Masking",
+          "alt": "shows overlapping sounds"
+        }
+      ]
     },
     {
       "id": "q29-haas-mono",
@@ -469,8 +690,17 @@
         { "id": "d", "label": "It always pans both channels to the center" }
       ],
       "correctAnswer": "c",
+      "hint": "A short delay between channels summed together means overlapping waves. What happens when nearly-identical waves overlap slightly out of time?",
       "categories": ["Stereo & Imaging"],
-      "explanation": "The Haas effect relies on a short delay between L and R. When collapsed to mono, the delayed copy partially cancels the original, creating comb filtering that thins out the sound."
+      "explanation": "The Haas effect relies on a short delay between L and R. When collapsed to mono, the delayed copy partially cancels the original, creating comb filtering that thins out the sound.",
+      "media": [
+        {
+          "type": "image",
+          "src": "../assets/images/quiz-diagrams/comb-filtering.svg",
+          "title": "Comb Filtering",
+          "alt": "shows phase cancellation pattern"
+        }
+      ]
     }
   ]
 }

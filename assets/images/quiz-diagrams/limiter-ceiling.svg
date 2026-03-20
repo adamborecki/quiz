@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300">
+  <rect width="600" height="300" fill="#F5EDE3" rx="8"/>
+  <text x="300" y="28" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2D2D2D">Limiter: Output Ceiling</text>
+
+  <!-- Waveform area -->
+  <rect x="40" y="45" width="530" height="210" fill="white" fill-opacity="0.5" rx="6" stroke="#E8D5C0" stroke-width="1"/>
+  <!-- Center line -->
+  <line x1="50" y1="155" x2="560" y2="155" stroke="#E8D5C0" stroke-width="0.5"/>
+
+  <!-- Ceiling line (top) -->
+  <line x1="50" y1="85" x2="560" y2="85" stroke="#C0392B" stroke-width="2" stroke-dasharray="8,4"/>
+  <!-- Ceiling line (bottom mirror) -->
+  <line x1="50" y1="225" x2="560" y2="225" stroke="#C0392B" stroke-width="2" stroke-dasharray="8,4"/>
+  <!-- Ceiling labels -->
+  <text x="565" y="82" font-family="system-ui, sans-serif" font-size="10" fill="#C0392B" font-weight="bold">Output</text>
+  <text x="565" y="93" font-family="system-ui, sans-serif" font-size="10" fill="#C0392B" font-weight="bold">ceiling</text>
+
+  <!-- Original waveform (faded, showing where peaks would go) -->
+  <path d="M 60,155 C 75,155 80,140 90,130 C 100,120 110,155 120,170 C 130,180 140,155 150,140
+  C 160,125 170,80 180,55 C 190,80 200,230 210,250 C 220,230 230,75 240,50 C 250,75 260,235 270,255
+  C 280,235 290,100 300,110 C 310,125 320,155 330,145 C 340,135 350,115 360,100
+  C 370,75 380,60 390,55 C 400,60 410,245 420,255 C 430,245 440,65 450,50 C 460,65 470,240 480,250
+  C 490,240 500,110 510,120 C 520,130 530,150 540,155"
+  fill="none" stroke="#5C3D2E" stroke-width="1" opacity="0.25" stroke-dasharray="4,3"/>
+
+  <!-- Limited waveform (peaks flattened at ceiling) -->
+  <path d="M 60,155 C 75,155 80,140 90,130 C 100,120 110,155 120,170 C 130,180 140,155 150,140
+  C 160,125 170,95 178,85 L 182,85 C 190,95 200,215 208,225 L 212,225 C 220,215 230,90 238,85 L 242,85 C 250,90 260,218 268,225 L 272,225
+  C 280,218 290,100 300,110 C 310,125 320,155 330,145 C 340,135 350,115 360,100
+  C 370,88 378,85 L 382,85 C 390,85 392,85 C 400,88 410,220 418,225 L 422,225 C 430,220 440,88 448,85 L 452,85 C 460,88 470,218 478,225 L 482,225
+  C 490,218 500,110 510,120 C 520,130 530,150 540,155"
+  fill="none" stroke="#5C3D2E" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Flattened peak indicators -->
+  <line x1="178" y1="85" x2="182" y2="85" stroke="#C0392B" stroke-width="3"/>
+  <line x1="238" y1="85" x2="242" y2="85" stroke="#C0392B" stroke-width="3"/>
+  <line x1="378" y1="85" x2="392" y2="85" stroke="#C0392B" stroke-width="3"/>
+  <line x1="448" y1="85" x2="452" y2="85" stroke="#C0392B" stroke-width="3"/>
+
+  <!-- Annotation: peaks prevented -->
+  <path d="M 240,50 C 240,45 250,42 260,42" fill="none" stroke="#C0392B" stroke-width="1"/>
+  <rect x="260" y="34" width="200" height="18" fill="#C0392B" fill-opacity="0.1" rx="3"/>
+  <text x="360" y="47" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#C0392B" font-weight="bold">Peaks prevented from exceeding ceiling</text>
+
+  <!-- Normal signal annotation -->
+  <rect x="285" y="262" width="200" height="18" fill="#3D8B37" fill-opacity="0.1" rx="3"/>
+  <text x="385" y="275" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#3D8B37" font-weight="bold">Below ceiling: signal passes normally</text>
+</svg>

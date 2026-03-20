@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300">
+  <rect width="600" height="300" fill="#F5EDE3" rx="8"/>
+  <!-- Title -->
+  <text x="300" y="25" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2D2D2D">High-Pass vs Low-Pass Filters</text>
+
+  <!-- LEFT PANEL: High-Pass -->
+  <rect x="15" y="38" width="275" height="240" fill="white" fill-opacity="0.5" rx="4" stroke="#E8D5C0" stroke-width="1"/>
+  <text x="152" y="58" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#5C3D2E">High-Pass Filter</text>
+  <!-- Axes -->
+  <line x1="50" y1="80" x2="50" y2="230" stroke="#2D2D2D" stroke-width="1.5"/>
+  <line x1="50" y1="230" x2="275" y2="230" stroke="#2D2D2D" stroke-width="1.5"/>
+  <text x="30" y="160" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D" transform="rotate(-90,30,160)">Level</text>
+  <text x="162" y="248" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D">Frequency →</text>
+  <!-- Removed region (red) -->
+  <rect x="50" y="80" width="100" height="150" fill="#C0392B" fill-opacity="0.08" rx="2"/>
+  <!-- Passes region (green) -->
+  <rect x="150" y="80" width="125" height="150" fill="#3D8B37" fill-opacity="0.08" rx="2"/>
+  <!-- Cutoff line -->
+  <line x1="150" y1="75" x2="150" y2="235" stroke="#5C3D2E" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="150" y="268" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#5C3D2E" font-weight="bold">Cutoff freq</text>
+  <!-- Filter curve -->
+  <path d="M 50,225 C 70,225 100,222 120,210 C 135,195 145,160 150,100 L 150,100 C 152,95 155,92 160,90 L 275,90" fill="none" stroke="#5C3D2E" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Labels -->
+  <text x="95" y="175" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#C0392B" font-weight="bold">Removed</text>
+  <text x="95" y="188" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#C0392B">(lows cut)</text>
+  <text x="215" y="115" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#3D8B37" font-weight="bold">Passes</text>
+  <text x="215" y="128" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#3D8B37">(highs pass)</text>
+  <!-- Arrows -->
+  <path d="M 95,148 L 95,160" stroke="#C0392B" stroke-width="1.5" fill="none" marker-end="url(#arrowRed)"/>
+  <path d="M 215,132 L 215,100" stroke="#3D8B37" stroke-width="1.5" fill="none"/>
+
+  <!-- RIGHT PANEL: Low-Pass -->
+  <rect x="310" y="38" width="275" height="240" fill="white" fill-opacity="0.5" rx="4" stroke="#E8D5C0" stroke-width="1"/>
+  <text x="447" y="58" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#5C3D2E">Low-Pass Filter</text>
+  <!-- Axes -->
+  <line x1="345" y1="80" x2="345" y2="230" stroke="#2D2D2D" stroke-width="1.5"/>
+  <line x1="345" y1="230" x2="570" y2="230" stroke="#2D2D2D" stroke-width="1.5"/>
+  <text x="325" y="160" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D" transform="rotate(-90,325,160)">Level</text>
+  <text x="457" y="248" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D">Frequency →</text>
+  <!-- Passes region (green) -->
+  <rect x="345" y="80" width="100" height="150" fill="#3D8B37" fill-opacity="0.08" rx="2"/>
+  <!-- Removed region (red) -->
+  <rect x="445" y="80" width="125" height="150" fill="#C0392B" fill-opacity="0.08" rx="2"/>
+  <!-- Cutoff line -->
+  <line x1="445" y1="75" x2="445" y2="235" stroke="#5C3D2E" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="445" y="268" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#5C3D2E" font-weight="bold">Cutoff freq</text>
+  <!-- Filter curve -->
+  <path d="M 345,90 L 435,90 C 440,90 443,92 445,100 C 450,160 460,195 475,210 C 495,222 525,225 570,225" fill="none" stroke="#5C3D2E" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Labels -->
+  <text x="395" y="115" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#3D8B37" font-weight="bold">Passes</text>
+  <text x="395" y="128" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#3D8B37">(lows pass)</text>
+  <text x="510" y="175" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#C0392B" font-weight="bold">Removed</text>
+  <text x="510" y="188" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#C0392B">(highs cut)</text>
+</svg>

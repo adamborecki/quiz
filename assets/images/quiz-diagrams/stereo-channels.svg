@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 250">
+  <rect width="600" height="250" fill="#F5EDE3" rx="8"/>
+  <text x="300" y="28" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2D2D2D">Stereo Audio: Two Channels</text>
+
+  <!-- Stereo bracket -->
+  <text x="24" y="140" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#5C3D2E" transform="rotate(-90,24,140)">STEREO</text>
+  <path d="M 38,55 C 30,55 28,55 28,65 L 28,210 C 28,220 30,220 38,220" fill="none" stroke="#5C3D2E" stroke-width="2"/>
+
+  <!-- LEFT CHANNEL -->
+  <rect x="50" y="45" width="530" height="85" fill="white" fill-opacity="0.5" rx="6" stroke="#3D8B37" stroke-width="1.5"/>
+  <!-- L badge -->
+  <rect x="58" y="52" width="28" height="22" fill="#3D8B37" rx="4"/>
+  <text x="72" y="68" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="white">L</text>
+  <text x="100" y="67" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#3D8B37">Left Channel</text>
+  <!-- Center line -->
+  <line x1="55" y1="95" x2="575" y2="95" stroke="#E8D5C0" stroke-width="0.5"/>
+  <!-- Left waveform -->
+  <path d="M 60,95 C 70,95 80,88 90,80 C 100,72 105,95 110,105 C 115,115 120,95 125,85 C 130,75 135,60 140,50
+  C 145,60 150,130 155,140 C 160,130 165,55 170,48 C 175,55 180,128 185,135
+  C 190,128 195,80 200,72 C 205,80 210,105 215,110 C 220,105 225,95 230,90
+  C 235,85 240,95 245,98 C 250,102 255,92 260,88
+  C 265,78 270,60 275,52 C 280,60 285,125 290,135 C 295,125 300,65 305,55
+  C 310,65 315,120 320,128 C 325,120 330,85 335,78 C 340,85 345,100 350,95
+  C 355,90 360,95 365,98 C 370,102 375,90 380,85
+  C 385,75 390,62 395,55 C 400,62 405,130 410,138 C 415,130 420,58 425,50
+  C 430,58 435,128 440,135 C 445,128 450,80 455,75 C 460,80 465,100 470,95
+  C 475,90 480,95 485,97 C 490,99 495,93 500,90 C 505,88 510,92 515,95
+  C 520,98 525,92 530,90 C 535,88 540,93 545,95 C 550,95 555,94 560,95 L 575,95" fill="none" stroke="#3D8B37" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- RIGHT CHANNEL -->
+  <rect x="50" y="140" width="530" height="85" fill="white" fill-opacity="0.5" rx="6" stroke="#5C3D2E" stroke-width="1.5"/>
+  <!-- R badge -->
+  <rect x="58" y="147" width="28" height="22" fill="#5C3D2E" rx="4"/>
+  <text x="72" y="163" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="white">R</text>
+  <text x="100" y="162" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#5C3D2E">Right Channel</text>
+  <!-- Center line -->
+  <line x1="55" y1="190" x2="575" y2="190" stroke="#E8D5C0" stroke-width="0.5"/>
+  <!-- Right waveform (slightly different from left) -->
+  <path d="M 60,190 C 70,190 80,184 90,178 C 100,172 105,195 110,200 C 115,208 120,190 125,182 C 130,172 135,158 140,148
+  C 145,158 150,222 155,230 C 160,222 165,155 170,148 C 175,155 180,220 185,228
+  C 190,220 195,178 200,170 C 205,178 210,198 215,202 C 220,198 225,190 230,186
+  C 235,182 240,190 245,193 C 250,196 255,188 260,184
+  C 265,175 270,162 275,155 C 280,162 285,218 290,228 C 295,218 300,160 305,152
+  C 310,160 315,215 320,222 C 325,215 330,182 335,175 C 340,182 345,195 350,190
+  C 355,185 360,190 365,193 C 370,196 375,186 380,182
+  C 385,172 390,158 395,152 C 400,158 405,225 410,232 C 415,225 420,155 425,148
+  C 430,155 435,222 440,228 C 445,222 450,178 455,172 C 460,178 465,195 470,190
+  C 475,185 480,190 485,192 C 490,194 495,188 500,186 C 505,183 510,188 515,190
+  C 520,193 525,187 530,185 C 535,183 540,188 545,190 C 550,190 555,189 560,190 L 575,190" fill="none" stroke="#5C3D2E" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- Info text -->
+  <text x="300" y="243" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#5C3D2E">Each channel carries a unique signal — together they create the stereo image</text>
+</svg>

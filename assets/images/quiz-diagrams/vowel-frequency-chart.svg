@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300">
+  <rect width="600" height="300" fill="#F5EDE3" rx="8"/>
+  <text x="300" y="30" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2D2D2D">Vowel Frequencies</text>
+  <text x="300" y="48" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#5C3D2E">Each vowel sound resonates at a characteristic frequency</text>
+
+  <!-- Frequency scale line -->
+  <line x1="80" y1="265" x2="540" y2="265" stroke="#5C3D2E" stroke-width="2"/>
+  <text x="80" y="285" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D">Low</text>
+  <text x="540" y="285" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D">High</text>
+  <!-- Arrow -->
+  <polygon points="537,261 545,265 537,269" fill="#5C3D2E"/>
+
+  <!-- Tick marks on scale -->
+  <line x1="110" y1="260" x2="110" y2="270" stroke="#5C3D2E" stroke-width="1.5"/>
+  <line x1="218" y1="260" x2="218" y2="270" stroke="#5C3D2E" stroke-width="1.5"/>
+  <line x1="326" y1="260" x2="326" y2="270" stroke="#5C3D2E" stroke-width="1.5"/>
+  <line x1="418" y1="260" x2="418" y2="270" stroke="#5C3D2E" stroke-width="1.5"/>
+  <line x1="510" y1="260" x2="510" y2="270" stroke="#5C3D2E" stroke-width="1.5"/>
+
+  <!-- 250 Hz - "oo" -->
+  <circle cx="110" cy="175" r="38" fill="#5C3D2E" fill-opacity="0.12" stroke="#5C3D2E" stroke-width="2"/>
+  <text x="110" y="168" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" font-weight="bold" fill="#5C3D2E">oo</text>
+  <text x="110" y="190" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#5C3D2E">"boot"</text>
+  <text x="110" y="230" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#2D2D2D">250 Hz</text>
+  <line x1="110" y1="213" x2="110" y2="223" stroke="#5C3D2E" stroke-width="1" stroke-dasharray="2,2"/>
+
+  <!-- 500 Hz - "o" -->
+  <circle cx="218" cy="175" r="38" fill="#3D8B37" fill-opacity="0.12" stroke="#3D8B37" stroke-width="2"/>
+  <text x="218" y="168" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" font-weight="bold" fill="#3D8B37">o</text>
+  <text x="218" y="190" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#3D8B37">"go"</text>
+  <text x="218" y="230" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#2D2D2D">500 Hz</text>
+  <line x1="218" y1="213" x2="218" y2="223" stroke="#3D8B37" stroke-width="1" stroke-dasharray="2,2"/>
+
+  <!-- 1k Hz - "ah" -->
+  <circle cx="326" cy="175" r="38" fill="#C0392B" fill-opacity="0.12" stroke="#C0392B" stroke-width="2"/>
+  <text x="326" y="168" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" font-weight="bold" fill="#C0392B">ah</text>
+  <text x="326" y="190" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#C0392B">"father"</text>
+  <text x="326" y="230" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#2D2D2D">1 kHz</text>
+  <line x1="326" y1="213" x2="326" y2="223" stroke="#C0392B" stroke-width="1" stroke-dasharray="2,2"/>
+
+  <!-- 2k Hz - "a" -->
+  <circle cx="418" cy="175" r="38" fill="#5C3D2E" fill-opacity="0.18" stroke="#5C3D2E" stroke-width="2"/>
+  <text x="418" y="168" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" font-weight="bold" fill="#5C3D2E">a</text>
+  <text x="418" y="190" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#5C3D2E">"hay"</text>
+  <text x="418" y="230" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#2D2D2D">2 kHz</text>
+  <line x1="418" y1="213" x2="418" y2="223" stroke="#5C3D2E" stroke-width="1" stroke-dasharray="2,2"/>
+
+  <!-- 4k Hz - "ee" -->
+  <circle cx="510" cy="175" r="38" fill="#3D8B37" fill-opacity="0.18" stroke="#3D8B37" stroke-width="2"/>
+  <text x="510" y="168" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" font-weight="bold" fill="#3D8B37">ee</text>
+  <text x="510" y="190" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#3D8B37">"see"</text>
+  <text x="510" y="230" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#2D2D2D">4 kHz</text>
+  <line x1="510" y1="213" x2="510" y2="223" stroke="#3D8B37" stroke-width="1" stroke-dasharray="2,2"/>
+
+  <!-- Connection line through circles -->
+  <line x1="110" y1="175" x2="510" y2="175" stroke="#E8D5C0" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6"/>
+</svg>

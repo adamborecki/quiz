@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 250">
+  <defs>
+    <linearGradient id="meterGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#C0392B"/>
+      <stop offset="40%" stop-color="#E8A317"/>
+      <stop offset="70%" stop-color="#3D8B37"/>
+      <stop offset="100%" stop-color="#3D8B37"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="250" fill="#F5EDE3" rx="8"/>
+  <text x="300" y="28" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2D2D2D">Gain Reduction (GR) Meter</text>
+  <text x="300" y="46" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#5C3D2E">Reads right-to-left: further left = more compression</text>
+
+  <!-- Meter housing -->
+  <rect x="60" y="65" width="480" height="100" fill="#2D2D2D" rx="10" stroke="#5C3D2E" stroke-width="2"/>
+  <!-- Inner panel -->
+  <rect x="75" y="78" width="450" height="60" fill="#1a1a1a" rx="6"/>
+  <!-- Meter background -->
+  <rect x="85" y="88" width="430" height="40" fill="#111" rx="4"/>
+
+  <!-- Scale markings -->
+  <text x="515" y="85" text-anchor="end" font-family="system-ui, sans-serif" font-size="9" fill="#E8D5C0">dB</text>
+  <!-- 0 dB mark (right side) -->
+  <line x1="505" y1="88" x2="505" y2="128" stroke="#3D8B37" stroke-width="2"/>
+  <text x="505" y="142" text-anchor="middle" font-family="monospace, sans-serif" font-size="10" fill="#E8D5C0">0</text>
+  <!-- -3 dB -->
+  <line x1="440" y1="92" x2="440" y2="124" stroke="#E8D5C0" stroke-width="1" opacity="0.5"/>
+  <text x="440" y="142" text-anchor="middle" font-family="monospace, sans-serif" font-size="9" fill="#E8D5C0">-3</text>
+  <!-- -6 dB -->
+  <line x1="375" y1="92" x2="375" y2="124" stroke="#E8D5C0" stroke-width="1" opacity="0.5"/>
+  <text x="375" y="142" text-anchor="middle" font-family="monospace, sans-serif" font-size="9" fill="#E8D5C0">-6</text>
+  <!-- -10 dB -->
+  <line x1="290" y1="92" x2="290" y2="124" stroke="#E8D5C0" stroke-width="1" opacity="0.5"/>
+  <text x="290" y="142" text-anchor="middle" font-family="monospace, sans-serif" font-size="9" fill="#E8D5C0">-10</text>
+  <!-- -15 dB -->
+  <line x1="185" y1="92" x2="185" y2="124" stroke="#E8D5C0" stroke-width="1" opacity="0.5"/>
+  <text x="185" y="142" text-anchor="middle" font-family="monospace, sans-serif" font-size="9" fill="#E8D5C0">-15</text>
+  <!-- -20 dB -->
+  <line x1="95" y1="92" x2="95" y2="124" stroke="#C0392B" stroke-width="1" opacity="0.5"/>
+  <text x="95" y="142" text-anchor="middle" font-family="monospace, sans-serif" font-size="9" fill="#E8D5C0">-20</text>
+
+  <!-- LED segments (showing no gain reduction — needle at 0) -->
+  <!-- All segments unlit (dark) -->
+  <rect x="95" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="110" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="125" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="140" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="155" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="170" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="185" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="200" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="215" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="230" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="245" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="260" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="275" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="290" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="305" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="320" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="335" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="350" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="365" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="380" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="395" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="410" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="425" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="440" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="455" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="470" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <rect x="485" y="100" width="8" height="16" fill="#333" rx="1"/>
+  <!-- 0 dB indicator (lit green) -->
+  <rect x="500" y="98" width="10" height="20" fill="#3D8B37" rx="2"/>
+
+  <!-- GR label on meter -->
+  <text x="83" y="114" font-family="monospace, sans-serif" font-size="11" fill="#E8D5C0" font-weight="bold">GR</text>
+
+  <!-- Annotation box -->
+  <rect x="120" y="175" width="360" height="55" fill="white" fill-opacity="0.7" rx="6" stroke="#3D8B37" stroke-width="1.5"/>
+  <circle cx="145" cy="202" r="12" fill="#3D8B37" fill-opacity="0.15" stroke="#3D8B37" stroke-width="1.5"/>
+  <text x="145" y="206" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#3D8B37" font-weight="bold">0</text>
+  <text x="170" y="195" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#2D2D2D">0 dB GR = No compression occurring</text>
+  <text x="170" y="215" font-family="system-ui, sans-serif" font-size="11" fill="#5C3D2E">Meter reads right-to-left. Movement left = gain being reduced.</text>
+</svg>

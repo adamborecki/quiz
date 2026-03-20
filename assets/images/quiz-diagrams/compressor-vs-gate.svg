@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <rect width="600" height="400" fill="#F5EDE3" rx="8"/>
+  <text x="300" y="28" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2D2D2D">Compressor vs Gate</text>
+
+  <!-- TOP: Compressor -->
+  <rect x="25" y="42" width="550" height="160" fill="white" fill-opacity="0.5" rx="6" stroke="#5C3D2E" stroke-width="1.5"/>
+  <rect x="25" y="42" width="550" height="26" fill="#5C3D2E" rx="6"/>
+  <rect x="25" y="58" width="550" height="10" fill="#5C3D2E"/>
+  <text x="300" y="60" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#F5EDE3">COMPRESSOR</text>
+  <!-- Center line -->
+  <line x1="40" y1="140" x2="560" y2="140" stroke="#E8D5C0" stroke-width="0.5"/>
+  <!-- Threshold -->
+  <line x1="40" y1="105" x2="560" y2="105" stroke="#C0392B" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <line x1="40" y1="175" x2="560" y2="175" stroke="#C0392B" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="565" y="108" font-family="system-ui, sans-serif" font-size="8" fill="#C0392B">Thresh</text>
+
+  <!-- Waveform with peaks above threshold reduced -->
+  <!-- Below threshold portions -->
+  <path d="M 50,140 C 60,135 70,125 80,118 C 85,122 90,140 95,148 C 100,155 105,140 110,132" fill="none" stroke="#3D8B37" stroke-width="1.8"/>
+  <!-- Peak above threshold (with arrows showing reduction) -->
+  <path d="M 110,132 C 120,115 130,95 140,85 C 150,95 155,180 165,195 C 175,180 180,90 190,80 C 200,90 205,185 210,195 C 215,185 220,100 225,92 C 230,100 235,170 240,178" fill="none" stroke="#5C3D2E" stroke-width="1.2" opacity="0.3" stroke-dasharray="3,3"/>
+  <!-- Compressed version (reduced peaks) -->
+  <path d="M 110,132 C 120,118 128,108 138,103 C 148,108 153,172 163,178 C 173,172 178,106 188,100 C 198,106 203,174 208,178 C 213,174 218,112 223,108 C 228,112 233,163 238,168" fill="none" stroke="#5C3D2E" stroke-width="2"/>
+  <!-- Reduction arrows -->
+  <line x1="140" y1="85" x2="140" y2="103" stroke="#C0392B" stroke-width="1.5"/>
+  <polygon points="137,100 140,106 143,100" fill="#C0392B"/>
+  <line x1="190" y1="80" x2="190" y2="100" stroke="#C0392B" stroke-width="1.5"/>
+  <polygon points="187,97 190,103 193,97" fill="#C0392B"/>
+
+  <!-- Below threshold -->
+  <path d="M 238,168 C 243,162 248,145 253,140 C 258,135 263,148 268,152 C 273,156 278,142 283,138" fill="none" stroke="#3D8B37" stroke-width="1.8"/>
+  <!-- Another peak -->
+  <path d="M 283,138 C 293,115 303,90 313,78 C 323,90 328,185 338,198 C 348,185 353,85 363,75 C 373,85 378,188 383,198 C 388,188 393,105 398,95 C 403,105 408,165 413,170" fill="none" stroke="#5C3D2E" stroke-width="1.2" opacity="0.3" stroke-dasharray="3,3"/>
+  <path d="M 283,138 C 293,120 301,108 311,103 C 321,108 326,172 336,178 C 346,172 351,105 361,100 C 371,105 376,174 381,178 C 386,174 391,115 396,108 C 401,115 406,158 411,162" fill="none" stroke="#5C3D2E" stroke-width="2"/>
+  <line x1="313" y1="78" x2="313" y2="103" stroke="#C0392B" stroke-width="1.5"/>
+  <polygon points="310,100 313,106 316,100" fill="#C0392B"/>
+
+  <!-- Quiet end -->
+  <path d="M 411,162 C 416,155 421,142 426,140 C 431,138 436,145 441,148 C 446,152 451,140 456,137 C 461,134 466,142 471,140 C 476,138 481,140 486,140 C 491,140 496,138 501,140 C 506,142 511,140 516,140 C 521,140 530,140 540,140" fill="none" stroke="#3D8B37" stroke-width="1.8"/>
+
+  <!-- Label -->
+  <rect x="345" y="78" width="200" height="18" fill="#C0392B" fill-opacity="0.1" rx="3"/>
+  <text x="445" y="91" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#C0392B" font-weight="bold">Reduces signal ABOVE threshold</text>
+
+  <!-- Divider -->
+  <text x="300" y="218" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#5C3D2E" font-style="italic">They work in opposite directions!</text>
+
+  <!-- BOTTOM: Gate -->
+  <rect x="25" y="228" width="550" height="160" fill="white" fill-opacity="0.5" rx="6" stroke="#3D8B37" stroke-width="1.5"/>
+  <rect x="25" y="228" width="550" height="26" fill="#3D8B37" rx="6"/>
+  <rect x="25" y="244" width="550" height="10" fill="#3D8B37"/>
+  <text x="300" y="246" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#F5EDE3">GATE</text>
+  <!-- Center line -->
+  <line x1="40" y1="330" x2="560" y2="330" stroke="#E8D5C0" stroke-width="0.5"/>
+  <!-- Threshold -->
+  <line x1="40" y1="300" x2="560" y2="300" stroke="#C0392B" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <line x1="40" y1="360" x2="560" y2="360" stroke="#C0392B" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="565" y="303" font-family="system-ui, sans-serif" font-size="8" fill="#C0392B">Thresh</text>
+
+  <!-- Muted region (below threshold) -->
+  <line x1="50" y1="330" x2="110" y2="330" stroke="#C0392B" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+  <text x="80" y="345" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#C0392B" opacity="0.7">muted</text>
+
+  <!-- Signal above threshold passes -->
+  <path d="M 110,330 C 120,318 130,290 140,275 C 150,290 155,370 165,383 C 175,370 180,285 190,272 C 200,285 205,372 210,383 C 215,372 220,295 225,288 C 230,295 235,360 240,365" fill="none" stroke="#3D8B37" stroke-width="2"/>
+
+  <!-- Muted -->
+  <line x1="240" y1="330" x2="283" y2="330" stroke="#C0392B" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+  <text x="262" y="345" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#C0392B" opacity="0.7">muted</text>
+
+  <!-- Signal passes -->
+  <path d="M 283,330 C 293,315 303,288 313,272 C 323,288 328,375 338,385 C 348,375 353,280 363,268 C 373,280 378,378 383,385 C 388,378 393,298 398,290 C 403,298 408,355 413,358" fill="none" stroke="#3D8B37" stroke-width="2"/>
+
+  <!-- Muted -->
+  <line x1="413" y1="330" x2="540" y2="330" stroke="#C0392B" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+  <text x="476" y="345" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#C0392B" opacity="0.7">muted</text>
+
+  <!-- Label -->
+  <rect x="345" y="265" width="200" height="18" fill="#3D8B37" fill-opacity="0.1" rx="3"/>
+  <text x="445" y="278" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#3D8B37" font-weight="bold">Mutes signal BELOW threshold</text>
+</svg>

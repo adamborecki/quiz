@@ -7,7 +7,7 @@ import {
   gradeQuiz,
   normalizeQuizPack,
   validateQuizPack,
-} from "./quiz-core.mjs";
+} from "./quiz-core.mjs?v=3";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -46,6 +46,8 @@ const state = {
   reflections: {},
   attempts: [],
   hintUsage: {},
+  fiftyFiftyUsage: {},   // questionId → [eliminatedChoiceId, eliminatedChoiceId]
+  confidence: {},         // questionId → 1-5 scale
   questionTimestamps: {},
   quizStartedAt: null,
 };
@@ -120,6 +122,8 @@ function autoSave() {
     answers: state.answers,
     reflections: state.reflections,
     hintUsage: state.hintUsage,
+    fiftyFiftyUsage: state.fiftyFiftyUsage,
+    confidence: state.confidence,
     questionTimestamps: state.questionTimestamps,
     phase: state.phase,
     currentQuestionIndex: state.currentQuestionIndex,
@@ -485,13 +489,21 @@ function renderIntro() {
 
 function renderMedia(question) {
   if (!question.media.length) return "";
-  return question.media.map((m) => `
-    <div class="media-card">
-      <strong>${escapeHtml(m.title || "Audio example")}</strong>
-      ${m.caption ? `<p class="sidebar-text">${escapeHtml(m.caption)}</p>` : ""}
-      <audio controls preload="metadata" src="${escapeHtml(m.resolvedSrc)}"></audio>
-    </div>
-  `).join("");
+  return question.media.map((m) => {
+    if (m.type === "image") {
+      return `
+        <div class="media-card media-image">
+          <img src="${escapeHtml(m.resolvedSrc)}" alt="${escapeHtml(m.alt || m.title || "Diagram")}" loading="lazy">
+        </div>`;
+    }
+    // Default: audio
+    return `
+      <div class="media-card">
+        <strong>${escapeHtml(m.title || "Audio example")}</strong>
+        ${m.caption ? `<p class="sidebar-text">${escapeHtml(m.caption)}</p>` : ""}
+        <audio controls preload="metadata" src="${escapeHtml(m.resolvedSrc)}"></audio>
+      </div>`;
+  }).join("");
 }
 
 function renderHintButton(question) {
@@ -499,12 +511,60 @@ function renderHintButton(question) {
   if (state.hintUsage[question.id]) {
     return `
       <div class="hint-revealed">
-        <strong class="hint-label">Hint</strong>
+        <strong class="hint-label">💡 Hint</strong>
         <p class="sidebar-text">${escapeHtml(question.hint)}</p>
       </div>
     `;
   }
-  return `<button class="secondary-button hint-button" id="hint-btn" type="button">Show hint</button>`;
+  return `<button class="secondary-button hint-button" id="hint-btn" type="button">💡 Show hint</button>`;
+}
+
+function renderFiftyFiftyButton(question) {
+  if (!state.quiz.settings.enableFiftyFifty) return "";
+  if (state.fiftyFiftyUsage[question.id]) {
+    return `<button class="secondary-button fifty-fifty-button is-used" disabled>50:50 used</button>`;
+  }
+  return `<button class="secondary-button fifty-fifty-button" id="fifty-fifty-btn" type="button">50:50</button>`;
+}
+
+function getFiftyFiftyEliminated(question) {
+  if (!state.fiftyFiftyUsage[question.id]) return [];
+  return state.fiftyFiftyUsage[question.id];
+}
+
+function computeFiftyFiftyChoices(question) {
+  // Eliminate 2 wrong answers (or half of wrong answers if fewer than 4 choices)
+  const wrongChoices = question.choices.filter((c) => c.id !== question.correctAnswer);
+  const selectedAnswer = state.answers[question.id];
+  // Don't eliminate the currently selected answer
+  const eliminatable = wrongChoices.filter((c) => c.id !== selectedAnswer);
+  // Shuffle and pick 2 (or as many as available)
+  const shuffled = eliminatable.sort(() => Math.random() - 0.5);
+  const count = Math.min(2, shuffled.length);
+  return shuffled.slice(0, count).map((c) => c.id);
+}
+
+function renderConfidenceSlider(question) {
+  const current = state.confidence[question.id] ?? 0;
+  const labels = ["", "Guessing", "Not sure", "Somewhat sure", "Confident", "Very confident"];
+  return `
+    <div class="confidence-drawer ${current ? "is-set" : ""}" id="confidence-drawer">
+      <button class="confidence-toggle" id="confidence-toggle" type="button">
+        <span class="confidence-toggle-icon">${current ? "✓" : "◉"}</span>
+        <span>How confident are you? ${current ? `<strong>${labels[current]}</strong>` : ""}</span>
+      </button>
+      <div class="confidence-panel" id="confidence-panel">
+        <div class="confidence-track">
+          ${[1, 2, 3, 4, 5].map((n) => `
+            <button class="confidence-dot ${current === n ? "is-active" : ""}" data-level="${n}" type="button" title="${labels[n]}">
+              <span class="confidence-dot-fill"></span>
+              <span class="confidence-dot-label">${labels[n]}</span>
+            </button>
+          `).join("")}
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 // ─── Rendering: Question ─────────────────────────────────────────────────────
@@ -516,6 +576,7 @@ function renderQuestion() {
   const isLast = state.currentQuestionIndex === state.quiz.questions.length - 1;
   const remaining = getUnansweredCount();
   const allDone = remaining === 0;
+  const eliminated = getFiftyFiftyEliminated(question);
 
   rootEl.innerHTML = `
     <article class="question-card">
@@ -533,17 +594,24 @@ function renderQuestion() {
         <form id="question-form" class="question-choices">
           <fieldset class="question-choices">
             <legend class="sr-only">Answer choices</legend>
-            ${question.choices.map((choice, ci) => `
-              <label class="choice-option ${selectedAnswer === choice.id ? "is-selected" : ""}">
-                <input type="radio" name="answer" value="${escapeHtml(choice.id)}" ${selectedAnswer === choice.id ? "checked" : ""}>
+            ${question.choices.map((choice, ci) => {
+              const isEliminated = eliminated.includes(choice.id);
+              return `
+              <label class="choice-option ${selectedAnswer === choice.id ? "is-selected" : ""} ${isEliminated ? "is-eliminated" : ""}">
+                <input type="radio" name="answer" value="${escapeHtml(choice.id)}" ${selectedAnswer === choice.id ? "checked" : ""} ${isEliminated ? "disabled" : ""}>
                 <span class="choice-letter">${CHOICE_LETTERS[ci]}</span>
                 <span class="choice-text">${escapeHtml(choice.label)}</span>
-              </label>
-            `).join("")}
+              </label>`;
+            }).join("")}
           </fieldset>
         </form>
 
-        ${renderHintButton(question)}
+        <div class="question-tools">
+          ${renderHintButton(question)}
+          ${renderFiftyFiftyButton(question)}
+        </div>
+
+        ${renderConfidenceSlider(question)}
 
         <div class="question-nav">
           <div class="nav-group">
@@ -610,6 +678,57 @@ function renderQuestion() {
       state.hintUsage[question.id] = true;
       autoSave();
       render();
+    });
+  }
+
+  // 50:50 button
+  const fiftyBtn = rootEl.querySelector("#fifty-fifty-btn");
+  if (fiftyBtn) {
+    fiftyBtn.addEventListener("click", () => {
+      const toEliminate = computeFiftyFiftyChoices(question);
+      state.fiftyFiftyUsage[question.id] = toEliminate;
+      autoSave();
+      // Animate elimination
+      toEliminate.forEach((choiceId) => {
+        const label = rootEl.querySelector(`input[value="${choiceId}"]`)?.closest(".choice-option");
+        if (label) {
+          label.classList.add("is-eliminated");
+          label.querySelector("input").disabled = true;
+        }
+      });
+      fiftyBtn.disabled = true;
+      fiftyBtn.classList.add("is-used");
+      fiftyBtn.textContent = "50:50 used";
+      showToast("Two answers eliminated!", "success");
+    });
+  }
+
+  // Confidence slider
+  const confidenceToggle = rootEl.querySelector("#confidence-toggle");
+  const confidencePanel = rootEl.querySelector("#confidence-panel");
+  if (confidenceToggle && confidencePanel) {
+    confidenceToggle.addEventListener("click", () => {
+      const drawer = rootEl.querySelector("#confidence-drawer");
+      drawer.classList.toggle("is-open");
+    });
+    confidencePanel.querySelectorAll(".confidence-dot").forEach((dot) => {
+      dot.addEventListener("click", () => {
+        const level = parseInt(dot.dataset.level, 10);
+        state.confidence[question.id] = level;
+        autoSave();
+        // Update UI
+        confidencePanel.querySelectorAll(".confidence-dot").forEach((d) => {
+          d.classList.toggle("is-active", parseInt(d.dataset.level, 10) === level);
+        });
+        const drawer = rootEl.querySelector("#confidence-drawer");
+        drawer.classList.add("is-set");
+        const labels = ["", "Guessing", "Not sure", "Somewhat sure", "Confident", "Very confident"];
+        confidenceToggle.querySelector("span:last-child").innerHTML =
+          `How confident are you? <strong>${labels[level]}</strong>`;
+        confidenceToggle.querySelector(".confidence-toggle-icon").textContent = "✓";
+        // Auto-close after selection
+        setTimeout(() => drawer.classList.remove("is-open"), 400);
+      });
     });
   }
 }
@@ -681,6 +800,8 @@ function renderResults() {
     answers: { ...state.answers },
     grade: state.grade,
     hintUsage: { ...state.hintUsage },
+    fiftyFiftyUsage: { ...state.fiftyFiftyUsage },
+    confidence: { ...state.confidence },
     questionTimestamps: { ...state.questionTimestamps },
     quizStartedAt: state.quizStartedAt,
     submittedAt: state.submittedAt,
@@ -735,6 +856,9 @@ function renderResults() {
             const ts = state.questionTimestamps[question.id];
             const timeSpent = ts && ts.end && ts.start ? ts.end - ts.start : null;
             const usedHint = state.hintUsage[question.id] ?? false;
+            const usedFiftyFifty = !!state.fiftyFiftyUsage[question.id];
+            const confLevel = state.confidence[question.id] ?? 0;
+            const confLabels = ["", "Guessing", "Not sure", "Somewhat sure", "Confident", "Very confident"];
             return `
               <article class="review-card ${isCorrect ? "is-correct" : "is-incorrect"}">
                 <div class="review-header">
@@ -750,7 +874,9 @@ function renderResults() {
                   <span><strong>Your answer:</strong> ${escapeHtml(getChoiceLabel(question, sel))}</span>
                   ${!isCorrect ? `<span><strong>Correct answer:</strong> ${escapeHtml(getChoiceLabel(question, question.correctAnswer))}</span>` : ""}
                   ${timeSpent ? `<span><strong>Time:</strong> ${formatDuration(timeSpent)}</span>` : ""}
+                  ${confLevel ? `<span><strong>Confidence:</strong> ${confLabels[confLevel]}</span>` : ""}
                   ${usedHint ? `<span><strong>Hint used:</strong> Yes</span>` : ""}
+                  ${usedFiftyFifty ? `<span><strong>50:50 used:</strong> Yes</span>` : ""}
                   ${question.explanation ? `<span class="explanation-text"><strong>Explanation:</strong> ${escapeHtml(question.explanation)}</span>` : ""}
                 </div>
               </article>
@@ -825,6 +951,8 @@ function renderResults() {
       answers: { ...state.answers },
       grade: state.grade,
       hintUsage: { ...state.hintUsage },
+      fiftyFiftyUsage: { ...state.fiftyFiftyUsage },
+      confidence: { ...state.confidence },
       questionTimestamps: { ...state.questionTimestamps },
       quizStartedAt: state.quizStartedAt,
       submittedAt: state.submittedAt,
@@ -839,6 +967,8 @@ function renderResults() {
     state.phase = "intro";
     state.reflections = {};
     state.hintUsage = {};
+    state.fiftyFiftyUsage = {};
+    state.confidence = {};
     state.questionTimestamps = {};
     state.quizStartedAt = null;
     autoSave();
@@ -949,6 +1079,8 @@ async function loadQuiz(path) {
   state.phase = "intro";
   state.reflections = {};
   state.hintUsage = {};
+  state.fiftyFiftyUsage = {};
+  state.confidence = {};
   state.questionTimestamps = {};
   state.quizStartedAt = null;
 
@@ -970,6 +1102,8 @@ async function loadQuiz(path) {
     state.answers = saved.answers || {};
     state.reflections = saved.reflections || {};
     state.hintUsage = saved.hintUsage || {};
+    state.fiftyFiftyUsage = saved.fiftyFiftyUsage || {};
+    state.confidence = saved.confidence || {};
     state.questionTimestamps = saved.questionTimestamps || {};
     state.currentQuestionIndex = saved.currentQuestionIndex || 0;
     state.quizStartedAt = saved.quizStartedAt ? new Date(saved.quizStartedAt) : null;

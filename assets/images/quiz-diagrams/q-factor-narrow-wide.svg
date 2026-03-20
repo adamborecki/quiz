@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300">
+  <rect width="600" height="300" fill="#F5EDE3" rx="8"/>
+  <text x="300" y="28" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#2D2D2D">Q Factor: Narrow vs Wide</text>
+  <!-- Grid area -->
+  <rect x="70" y="40" width="510" height="210" fill="white" fill-opacity="0.5" rx="4" stroke="#E8D5C0" stroke-width="1"/>
+  <!-- 0dB reference -->
+  <line x1="70" y1="200" x2="580" y2="200" stroke="#5C3D2E" stroke-width="1" stroke-dasharray="5,4"/>
+  <text x="62" y="204" text-anchor="end" font-family="system-ui, sans-serif" font-size="10" fill="#5C3D2E">0 dB</text>
+  <!-- +6 dB -->
+  <line x1="70" y1="130" x2="580" y2="130" stroke="#E8D5C0" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="62" y="134" text-anchor="end" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D">+6</text>
+  <!-- +12 dB -->
+  <line x1="70" y1="60" x2="580" y2="60" stroke="#E8D5C0" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="62" y="64" text-anchor="end" font-family="system-ui, sans-serif" font-size="10" fill="#2D2D2D">+12</text>
+  <!-- Axes labels -->
+  <text x="30" y="150" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#5C3D2E" transform="rotate(-90,30,150)">dB</text>
+  <text x="325" y="290" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#5C3D2E">Frequency →</text>
+  <!-- Center frequency -->
+  <line x1="325" y1="42" x2="325" y2="255" stroke="#E8D5C0" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="325" y="270" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#2D2D2D" font-weight="bold">1 kHz</text>
+  <!-- Wide Q curve (Low Q) -->
+  <path d="M 70,200 C 100,200 140,198 180,190 C 220,178 260,145 290,100 C 310,72 318,60 325,55 C 332,60 340,72 360,100 C 390,145 430,178 470,190 C 510,198 550,200 580,200" fill="#3D8B37" fill-opacity="0.08" stroke="#3D8B37" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Narrow Q curve (High Q) -->
+  <path d="M 70,200 C 150,200 240,200 275,200 C 290,198 300,190 310,165 C 318,130 322,80 325,55 C 328,80 332,130 340,165 C 350,190 360,198 375,200 C 410,200 500,200 580,200" fill="#C0392B" fill-opacity="0.08" stroke="#C0392B" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Legend -->
+  <rect x="395" y="65" width="175" height="60" fill="#F5EDE3" fill-opacity="0.95" rx="5" stroke="#E8D5C0" stroke-width="1"/>
+  <line x1="405" y1="85" x2="435" y2="85" stroke="#C0392B" stroke-width="2.5"/>
+  <text x="443" y="89" font-family="system-ui, sans-serif" font-size="11" fill="#C0392B" font-weight="bold">High Q — narrow</text>
+  <line x1="405" y1="110" x2="435" y2="110" stroke="#3D8B37" stroke-width="2.5"/>
+  <text x="443" y="114" font-family="system-ui, sans-serif" font-size="11" fill="#3D8B37" font-weight="bold">Low Q — wide</text>
+  <!-- Width arrows -->
+  <line x1="180" y1="188" x2="470" y2="188" stroke="#3D8B37" stroke-width="1"/>
+  <polygon points="183,185 175,188 183,191" fill="#3D8B37"/>
+  <polygon points="467,185 475,188 467,191" fill="#3D8B37"/>
+  <line x1="280" y1="196" x2="370" y2="196" stroke="#C0392B" stroke-width="1"/>
+  <polygon points="283,193 275,196 283,199" fill="#C0392B"/>
+  <polygon points="367,193 375,196 367,199" fill="#C0392B"/>
+</svg>
