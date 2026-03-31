@@ -491,8 +491,7 @@ function renderIntro() {
 
 function renderMedia(question) {
   if (!question.media.length) return "";
-  // Render only audio media inline; images are rendered as image hints
-  return question.media.filter((m) => m.type !== "image").map((m) => {
+  const audioHtml = question.media.filter((m) => m.type !== "image").map((m) => {
     return `
       <div class="media-card">
         <strong>${escapeHtml(m.title || "Audio example")}</strong>
@@ -500,22 +499,21 @@ function renderMedia(question) {
         <audio controls preload="metadata" src="${escapeHtml(m.resolvedSrc)}"></audio>
       </div>`;
   }).join("");
+  // Show revealed image hints in the main media area (full-width, above choices)
+  const imageHtml = state.imageHintUsage[question.id]
+    ? question.media.filter((m) => m.type === "image").map((m) => `
+        <div class="media-card media-image">
+          <img src="${escapeHtml(m.resolvedSrc)}" alt="${escapeHtml(m.alt || m.title || "Diagram")}" loading="lazy">
+        </div>`).join("")
+    : "";
+  return audioHtml + imageHtml;
 }
 
 function renderImageHintButton(question) {
   if (!state.quiz.settings.enableHints) return "";
   const imageMedia = question.media.filter((m) => m.type === "image");
   if (!imageMedia.length) return "";
-  if (state.imageHintUsage[question.id]) {
-    return imageMedia.map((m) => `
-      <div class="hint-revealed">
-        <strong class="hint-label">🖼️ Image Hint</strong>
-        <div class="media-card media-image">
-          <img src="${escapeHtml(m.resolvedSrc)}" alt="${escapeHtml(m.alt || m.title || "Diagram")}" loading="lazy">
-        </div>
-      </div>
-    `).join("");
-  }
+  if (state.imageHintUsage[question.id]) return "";
   return `<button class="secondary-button hint-button" id="image-hint-btn" type="button">🖼️ Show image hint</button>`;
 }
 
