@@ -46,8 +46,9 @@ const state = {
   reflections: {},
   attempts: [],
   hintUsage: {},
+  imageHintUsage: {},    // questionId → boolean
   fiftyFiftyUsage: {},   // questionId → [eliminatedChoiceId, eliminatedChoiceId]
-  confidence: {},         // questionId → 1-5 scale
+  confidence: {},         // questionId → 1-3 scale
   questionTimestamps: {},
   quizStartedAt: null,
 };
@@ -122,6 +123,7 @@ function autoSave() {
     answers: state.answers,
     reflections: state.reflections,
     hintUsage: state.hintUsage,
+    imageHintUsage: state.imageHintUsage,
     fiftyFiftyUsage: state.fiftyFiftyUsage,
     confidence: state.confidence,
     questionTimestamps: state.questionTimestamps,
@@ -202,7 +204,7 @@ function getCategoryProgress() {
 
 function getUnansweredCount() {
   if (!state.quiz) return 0;
-  return state.quiz.questions.filter((q) => !state.answers[q.id]).length;
+  return state.quiz.questions.filter((q) => !state.answers[q.id] || !state.confidence[q.id]).length;
 }
 
 function getAllAnswered() {
@@ -489,14 +491,8 @@ function renderIntro() {
 
 function renderMedia(question) {
   if (!question.media.length) return "";
-  return question.media.map((m) => {
-    if (m.type === "image") {
-      return `
-        <div class="media-card media-image">
-          <img src="${escapeHtml(m.resolvedSrc)}" alt="${escapeHtml(m.alt || m.title || "Diagram")}" loading="lazy">
-        </div>`;
-    }
-    // Default: audio
+  // Render only audio media inline; images are rendered as image hints
+  return question.media.filter((m) => m.type !== "image").map((m) => {
     return `
       <div class="media-card">
         <strong>${escapeHtml(m.title || "Audio example")}</strong>
@@ -506,17 +502,34 @@ function renderMedia(question) {
   }).join("");
 }
 
+function renderImageHintButton(question) {
+  if (!state.quiz.settings.enableHints) return "";
+  const imageMedia = question.media.filter((m) => m.type === "image");
+  if (!imageMedia.length) return "";
+  if (state.imageHintUsage[question.id]) {
+    return imageMedia.map((m) => `
+      <div class="hint-revealed">
+        <strong class="hint-label">🖼️ Image Hint</strong>
+        <div class="media-card media-image">
+          <img src="${escapeHtml(m.resolvedSrc)}" alt="${escapeHtml(m.alt || m.title || "Diagram")}" loading="lazy">
+        </div>
+      </div>
+    `).join("");
+  }
+  return `<button class="secondary-button hint-button" id="image-hint-btn" type="button">🖼️ Show image hint</button>`;
+}
+
 function renderHintButton(question) {
   if (!state.quiz.settings.enableHints || !question.hint) return "";
   if (state.hintUsage[question.id]) {
     return `
       <div class="hint-revealed">
-        <strong class="hint-label">💡 Hint</strong>
+        <strong class="hint-label">💡 Text Hint</strong>
         <p class="sidebar-text">${escapeHtml(question.hint)}</p>
       </div>
     `;
   }
-  return `<button class="secondary-button hint-button" id="hint-btn" type="button">💡 Show hint</button>`;
+  return `<button class="secondary-button hint-button" id="hint-btn" type="button">💡 Show text hint</button>`;
 }
 
 function renderFiftyFiftyButton(question) {
@@ -546,16 +559,16 @@ function computeFiftyFiftyChoices(question) {
 
 function renderConfidenceSlider(question) {
   const current = state.confidence[question.id] ?? 0;
-  const labels = ["", "Guessing", "Not sure", "Somewhat sure", "Confident", "Very confident"];
+  const labels = ["", "Guessing", "Somewhat sure", "Confident"];
   return `
-    <div class="confidence-drawer ${current ? "is-set" : ""}" id="confidence-drawer">
-      <button class="confidence-toggle" id="confidence-toggle" type="button">
+    <div class="confidence-drawer is-open ${current ? "is-set" : ""}" id="confidence-drawer">
+      <div class="confidence-header">
         <span class="confidence-toggle-icon">${current ? "✓" : "◉"}</span>
-        <span>How confident are you? ${current ? `<strong>${labels[current]}</strong>` : ""}</span>
-      </button>
+        <span>How confident are you?${current ? ` <strong>${labels[current]}</strong>` : ""}</span>
+      </div>
       <div class="confidence-panel" id="confidence-panel">
         <div class="confidence-track">
-          ${[1, 2, 3, 4, 5].map((n) => `
+          ${[1, 2, 3].map((n) => `
             <button class="confidence-dot ${current === n ? "is-active" : ""}" data-level="${n}" type="button" title="${labels[n]}">
               <span class="confidence-dot-fill"></span>
               <span class="confidence-dot-label">${labels[n]}</span>
@@ -608,6 +621,7 @@ function renderQuestion() {
 
         <div class="question-tools">
           ${renderHintButton(question)}
+          ${renderImageHintButton(question)}
           ${renderFiftyFiftyButton(question)}
         </div>
 
@@ -681,6 +695,15 @@ function renderQuestion() {
     });
   }
 
+  const imageHintBtn = rootEl.querySelector("#image-hint-btn");
+  if (imageHintBtn) {
+    imageHintBtn.addEventListener("click", () => {
+      state.imageHintUsage[question.id] = true;
+      autoSave();
+      render();
+    });
+  }
+
   // 50:50 button
   const fiftyBtn = rootEl.querySelector("#fifty-fifty-btn");
   if (fiftyBtn) {
@@ -704,13 +727,8 @@ function renderQuestion() {
   }
 
   // Confidence slider
-  const confidenceToggle = rootEl.querySelector("#confidence-toggle");
   const confidencePanel = rootEl.querySelector("#confidence-panel");
-  if (confidenceToggle && confidencePanel) {
-    confidenceToggle.addEventListener("click", () => {
-      const drawer = rootEl.querySelector("#confidence-drawer");
-      drawer.classList.toggle("is-open");
-    });
+  if (confidencePanel) {
     confidencePanel.querySelectorAll(".confidence-dot").forEach((dot) => {
       dot.addEventListener("click", () => {
         const level = parseInt(dot.dataset.level, 10);
@@ -722,12 +740,11 @@ function renderQuestion() {
         });
         const drawer = rootEl.querySelector("#confidence-drawer");
         drawer.classList.add("is-set");
-        const labels = ["", "Guessing", "Not sure", "Somewhat sure", "Confident", "Very confident"];
-        confidenceToggle.querySelector("span:last-child").innerHTML =
+        const labels = ["", "Guessing", "Somewhat sure", "Confident"];
+        const header = drawer.querySelector(".confidence-header");
+        header.querySelector("span:last-child").innerHTML =
           `How confident are you? <strong>${labels[level]}</strong>`;
-        confidenceToggle.querySelector(".confidence-toggle-icon").textContent = "✓";
-        // Auto-close after selection
-        setTimeout(() => drawer.classList.remove("is-open"), 400);
+        header.querySelector(".confidence-toggle-icon").textContent = "✓";
       });
     });
   }
@@ -800,6 +817,7 @@ function renderResults() {
     answers: { ...state.answers },
     grade: state.grade,
     hintUsage: { ...state.hintUsage },
+    imageHintUsage: { ...state.imageHintUsage },
     fiftyFiftyUsage: { ...state.fiftyFiftyUsage },
     confidence: { ...state.confidence },
     questionTimestamps: { ...state.questionTimestamps },
@@ -858,7 +876,7 @@ function renderResults() {
             const usedHint = state.hintUsage[question.id] ?? false;
             const usedFiftyFifty = !!state.fiftyFiftyUsage[question.id];
             const confLevel = state.confidence[question.id] ?? 0;
-            const confLabels = ["", "Guessing", "Not sure", "Somewhat sure", "Confident", "Very confident"];
+            const confLabels = ["", "Guessing", "Somewhat sure", "Confident"];
             return `
               <article class="review-card ${isCorrect ? "is-correct" : "is-incorrect"}">
                 <div class="review-header">
@@ -967,6 +985,7 @@ function renderResults() {
     state.phase = "intro";
     state.reflections = {};
     state.hintUsage = {};
+    state.imageHintUsage = {};
     state.fiftyFiftyUsage = {};
     state.confidence = {};
     state.questionTimestamps = {};
@@ -1102,6 +1121,7 @@ async function loadQuiz(path) {
     state.answers = saved.answers || {};
     state.reflections = saved.reflections || {};
     state.hintUsage = saved.hintUsage || {};
+    state.imageHintUsage = saved.imageHintUsage || {};
     state.fiftyFiftyUsage = saved.fiftyFiftyUsage || {};
     state.confidence = saved.confidence || {};
     state.questionTimestamps = saved.questionTimestamps || {};

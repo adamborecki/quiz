@@ -1,7 +1,7 @@
 {
   "$schema": "../quiz-pack.schema.json",
   "id": "mus347-spring-break",
-  "title": "MUS 347 Spring Break Quiz",
+  "title": "MUS 347 Take-Home Midterm",
   "instructions": "Answer all questions. Closed notes. For audio questions, listen to the example and identify what you hear.",
   "course": "MUS 347",
   "topic": "EQ, Dynamics, Stereo & Imaging",
@@ -475,23 +475,23 @@
     {
       "id": "q21-disable-limiter",
       "type": "multiple_choice",
-      "prompt": "Why should you disable the master limiter while making mixing decisions?",
+      "prompt": "Why is it important to be aware of whether your master limiter is applying compression to your overall mix?",
       "choices": [
-        { "id": "a", "label": "It uses too much CPU" },
-        { "id": "b", "label": "It can mask problems and affect your perception of dynamics" },
-        { "id": "c", "label": "It changes the pitch" },
-        { "id": "d", "label": "It causes latency only" }
+        { "id": "a", "label": "It uses too much CPU when compressing" },
+        { "id": "b", "label": "A limiter compressing your master means your overall level is too hot, affecting your gain structure and hiding mix problems" },
+        { "id": "c", "label": "It changes the pitch of your mix" },
+        { "id": "d", "label": "It only affects the file size of your bounce" }
       ],
       "correctAnswer": "b",
-      "hint": "If everything sounds loud, punchy, and polished, how would you notice if your mix actually has balance or dynamics problems?",
+      "hint": "Think about gain structure: if your limiter is constantly catching peaks, what does that tell you about your overall level going into it? What problems might that hide?",
       "categories": ["Dynamics Processors"],
-      "explanation": "A master limiter makes everything sound louder and more even, which can hide mix problems. Mixing without it gives you an honest picture of your dynamics and balance.",
+      "explanation": "If your master limiter is applying compression, your mix level is too high going into it. This means your gain structure is off — the limiter is doing work you didn't intend, masking dynamics and balance issues. You should manage your overall level so the limiter isn't compressing during mixing.",
       "media": [
         {
           "type": "image",
-          "src": "../assets/images/quiz-diagrams/limiter-masking-problems.svg",
-          "title": "Limiter Masking Problems",
-          "alt": "shows hidden mix issues"
+          "src": "../assets/images/quiz-diagrams/limiter-gain-structure.svg",
+          "title": "Limiter & Gain Structure",
+          "alt": "Diagram showing how a master limiter applying compression indicates your overall level is too hot"
         }
       ]
     },
