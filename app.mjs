@@ -2,7 +2,6 @@ import {
   buildAttemptExport,
   buildCanvasSubmission,
   buildPlainTextSummary,
-  countAnsweredQuestions,
   getChoiceLabel,
   gradeQuiz,
   normalizeQuizPack,
@@ -195,16 +194,20 @@ function getCategoryProgress() {
       if (!map.has(cat)) map.set(cat, { name: cat, total: 0, answered: 0 });
       const entry = map.get(cat);
       entry.total++;
-      if (state.answers[q.id]) entry.answered++;
+      if (isQuestionComplete(q.id)) entry.answered++;
     }
   }
 
   return [...map.values()];
 }
 
+function isQuestionComplete(qid) {
+  return Boolean(state.answers[qid] && state.confidence[qid]);
+}
+
 function getUnansweredCount() {
   if (!state.quiz) return 0;
-  return state.quiz.questions.filter((q) => !state.answers[q.id] || !state.confidence[q.id]).length;
+  return state.quiz.questions.filter((q) => !isQuestionComplete(q.id)).length;
 }
 
 function getAllAnswered() {
@@ -344,9 +347,9 @@ function renderSidebar() {
   }
 
   // ─── Quiz phase sidebar ───
-  const answered = countAnsweredQuestions(state.quiz, state.answers);
   const total = state.quiz.questions.length;
-  const remaining = total - answered;
+  const remaining = getUnansweredCount();
+  const answered = total - remaining;
   const progressPct = Math.round((answered / total) * 100);
   const categories = getCategoryProgress();
 
@@ -382,10 +385,10 @@ function renderSidebar() {
           <div class="question-jump-grid" aria-label="Question navigation">
             ${state.quiz.questions.map((q, i) => `
               <button
-                class="question-jump ${i === state.currentQuestionIndex ? "is-current" : ""} ${state.answers[q.id] ? "is-answered" : ""}"
+                class="question-jump ${i === state.currentQuestionIndex ? "is-current" : ""} ${isQuestionComplete(q.id) ? "is-answered" : ""}"
                 type="button"
                 data-jump-index="${i}"
-                aria-label="Question ${i + 1}${state.answers[q.id] ? " (answered)" : ""}"
+                aria-label="Question ${i + 1}${isQuestionComplete(q.id) ? " (answered)" : ""}"
               >${i + 1}</button>
             `).join("")}
           </div>
